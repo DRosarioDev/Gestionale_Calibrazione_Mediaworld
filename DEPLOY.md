@@ -50,7 +50,7 @@ Prima del commit controllare che `git status` non mostri `node_modules`,
    - il web service `gestionale-calibrazione` (piano free, Docker);
    - il database `calibrazione-db` (PostgreSQL 17, piano free).
 5. Quando viene chiesto **APP_ADMIN_PASSWORD**, scegliere una password per
-   l'amministratore (l'email è `admin@mediaworld.it`).
+   l'amministratore (l'email è `admin@media-saturn.com`).
 6. **Apply** e attendere il primo deploy (circa 5–10 minuti: va scaricato
    Gradle e compilato Angular).
 
@@ -59,7 +59,7 @@ Alla fine Render mostra un URL tipo
 
 ## 3. Primo accesso
 
-- Email: `admin@mediaworld.it`
+- Email: `admin@media-saturn.com`
 - Password: quella scelta al punto 2.
 
 Il database viene creato automaticamente e `schema.sql` è idempotente. Il
@@ -67,7 +67,7 @@ primo avvio crea solo l'amministratore, senza dati di esempio.
 
 Per caricare i dati demo (5 utenti e 20 televisori) impostare
 `APP_SEED_DEMO=true` nelle variabili d'ambiente e rifare il deploy.
-Attenzione: i dati demo comprendono l'account `admin@mediaworld.it` con
+Attenzione: i dati demo comprendono l'account `admin@media-saturn.com` con
 password nota `Admin123!` e ruolo amministratore. Vanno bene per una demo
 temporanea, non per un URL pubblico con dati reali.
 

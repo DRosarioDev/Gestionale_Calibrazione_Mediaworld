@@ -186,7 +186,7 @@ WHERE table_schema = 'public'
     Write-Host "  .\scripts\run-postgres.ps1"
     Write-Host ""
     Write-Host "Al primo avvio viene creato l'amministratore:"
-    Write-Host "  email    : admin@mediaworld.it"
+    Write-Host "  email    : admin@media-saturn.com"
     Write-Host "  password : Admin123! (da cambiare)"
     Write-Host ""
 } finally {

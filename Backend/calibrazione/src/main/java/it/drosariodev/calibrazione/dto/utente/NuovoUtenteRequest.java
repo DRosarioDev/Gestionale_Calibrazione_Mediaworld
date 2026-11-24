@@ -21,7 +21,7 @@ public class NuovoUtenteRequest {
 
     @NotBlank
     @Email
-    @Pattern(regexp = "(?i)^[\\w.+-]+@mediaworld\\.it$", message = "L'email deve appartenere al dominio @mediaworld.it")
+    @Pattern(regexp = "(?i)^[\\w.+-]+@media-saturn\\.com$", message = "L'email deve appartenere al dominio @media-saturn.com")
     private String email;
 
     @NotNull

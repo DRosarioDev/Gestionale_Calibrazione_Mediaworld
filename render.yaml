@@ -29,12 +29,12 @@ services:
       - key: APP_SEED_ADMIN
         value: "true"
       - key: APP_ADMIN_EMAIL
-        value: admin@mediaworld.it
+        value: admin@media-saturn.com
       - key: APP_ADMIN_PASSWORD
         sync: false
 
       # Dati demo (5 utenti e 20 TV). Lasciare "false" su un URL pubblico:
-      # i dati demo includono l'account admin@mediaworld.it con password
+      # i dati demo includono l'account admin@media-saturn.com con password
       # nota, che ha i permessi di amministratore.
       - key: APP_SEED_DEMO
         value: "false"

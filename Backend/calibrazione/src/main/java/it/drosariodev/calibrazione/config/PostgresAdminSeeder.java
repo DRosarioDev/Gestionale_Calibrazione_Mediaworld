@@ -42,7 +42,7 @@ public class PostgresAdminSeeder implements ApplicationRunner {
     private final IDAOUtente daoUtente;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.seed.admin.email:admin@mediaworld.it}")
+    @Value("${app.seed.admin.email:admin@media-saturn.com}")
     private String email;
 
     @Value("${app.seed.admin.password:Admin123!}")

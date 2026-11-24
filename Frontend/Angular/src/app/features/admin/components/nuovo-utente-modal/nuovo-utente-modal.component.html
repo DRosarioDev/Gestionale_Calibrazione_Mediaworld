@@ -1,7 +1,7 @@
 <app-modal
   [aperto]="aperto"
   titolo="Crea un nuovo profilo"
-  sottotitolo="L’email deve appartenere al dominio aziendale &#64;mediaworld.it."
+  sottotitolo="L’email deve appartenere al dominio aziendale &#64;media-saturn.com."
   larghezza="560px"
   (chiuso)="chiudi()"
 >
@@ -43,14 +43,14 @@
           type="email"
           class="controllo"
           formControlName="email"
-          placeholder="mario.verdi&#64;mediaworld.it"
+          placeholder="mario.verdi&#64;media-saturn.com"
           autocomplete="off"
         />
         @if (
           form.controls.email.touched &&
           form.controls.email.errors?.['dominioNonValido']
         ) {
-          <small class="messaggio-errore">Usa un indirizzo con dominio &#64;mediaworld.it.</small>
+          <small class="messaggio-errore">Usa un indirizzo con dominio &#64;media-saturn.com.</small>
         } @else if (form.controls.email.touched && form.controls.email.invalid) {
           <small class="messaggio-errore">Inserisci un’email valida.</small>
         }

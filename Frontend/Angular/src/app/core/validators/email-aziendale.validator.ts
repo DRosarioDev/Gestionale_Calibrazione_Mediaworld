@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-const DOMINIO = '@mediaworld.it';
+const DOMINIO = '@media-saturn.com';
 
 export const emailAziendaleValidator: ValidatorFn = (
   control: AbstractControl,

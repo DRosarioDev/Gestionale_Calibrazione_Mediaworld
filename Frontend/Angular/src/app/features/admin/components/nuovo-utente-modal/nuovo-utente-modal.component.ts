@@ -59,7 +59,7 @@ export class NuovoUtenteModalComponent implements OnChanges {
   async crea(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.errore.set('Completa tutti i campi e usa un’email @mediaworld.it.');
+      this.errore.set('Completa tutti i campi e usa un’email @media-saturn.com.');
       return;
     }
 

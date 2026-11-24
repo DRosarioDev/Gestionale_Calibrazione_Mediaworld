@@ -93,15 +93,15 @@ public class DatiDemoSeeder implements ApplicationRunner {
     }
 
     private void creaUtenti() throws DAOException {
-        creaUtente("Marco", "Rossi", "admin@mediaworld.it", "Admin123!",
+        creaUtente("Marco", "Rossi", "admin@media-saturn.com", "Admin123!",
                 ERuolo.ADMIN, true, dataGiorniFa(320));
-        creaUtente("Luca", "Bianchi", "tecnico@mediaworld.it", "Tecnico123!",
+        creaUtente("Luca", "Bianchi", "tecnico@media-saturn.com", "Tecnico123!",
                 ERuolo.TECNICO, true, dataGiorniFa(280));
-        creaUtente("Sara", "Conti", "sara.conti@mediaworld.it", "Tecnico123!",
+        creaUtente("Sara", "Conti", "sara.conti@media-saturn.com", "Tecnico123!",
                 ERuolo.TECNICO, true, dataGiorniFa(190));
-        creaUtente("Andrea", "Ferri", "andrea.ferri@mediaworld.it", "Tecnico123!",
+        creaUtente("Andrea", "Ferri", "andrea.ferri@media-saturn.com", "Tecnico123!",
                 ERuolo.TECNICO, true, dataGiorniFa(140));
-        creaUtente("Giulia", "Moretti", "giulia.moretti@mediaworld.it", "Tecnico123!",
+        creaUtente("Giulia", "Moretti", "giulia.moretti@media-saturn.com", "Tecnico123!",
                 ERuolo.TECNICO, false, dataGiorniFa(90));
     }
 

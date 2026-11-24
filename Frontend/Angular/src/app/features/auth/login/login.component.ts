@@ -37,8 +37,8 @@ export class LoginComponent {
   compilaDemo(tipo: 'admin' | 'tecnico'): void {
     const credenziali =
       tipo === 'admin'
-        ? { email: 'admin@mediaworld.it', password: 'Admin123!' }
-        : { email: 'tecnico@mediaworld.it', password: 'Tecnico123!' };
+        ? { email: 'admin@media-saturn.com', password: 'Admin123!' }
+        : { email: 'tecnico@media-saturn.com', password: 'Tecnico123!' };
 
     this.form.setValue(credenziali);
     this.errore.set(null);
