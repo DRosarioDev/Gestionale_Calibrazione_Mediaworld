@@ -32,6 +32,11 @@ public class UtenteController {
         return utenteService.findAll();
     }
 
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UtenteDTO crea(@Valid @RequestBody NuovoUtenteRequest request) throws DAOException {
