@@ -31,4 +31,9 @@ public class AuthController {
         return authService.utenteCorrente();
     }
 
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
+    }
+
 }
