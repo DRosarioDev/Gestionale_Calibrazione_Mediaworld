@@ -1,0 +1,85 @@
+.campo-range {
+  --accento: var(--mw-grigio-700);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--mw-grigio-200);
+  border-radius: 11px;
+  background: #fff;
+  transition: border-color var(--transizione), box-shadow var(--transizione);
+}
+
+.campo-range:focus-within {
+  border-color: color-mix(in srgb, var(--accento) 45%, var(--mw-grigio-200));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accento) 10%, transparent);
+}
+
+.accento-rosso { --accento: #dc2626; }
+.accento-verde { --accento: #16a34a; }
+.accento-blu { --accento: #2563eb; }
+.accento-ambra { --accento: #d97706; }
+
+.testata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mw-grigio-700);
+}
+
+.numero {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 7px;
+  border: 1px solid var(--mw-grigio-200);
+  border-radius: 7px;
+  background: var(--mw-grigio-50);
+}
+
+.numero input {
+  width: 46px;
+  border: 0;
+  background: transparent;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mw-grigio-900);
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.numero input::-webkit-outer-spin-button,
+.numero input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.numero span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mw-grigio-500);
+}
+
+.slider {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accento);
+  cursor: pointer;
+}
+
+small {
+  font-size: 11px;
+  color: var(--mw-grigio-500);
+}
+
+.disabilitato {
+  opacity: 0.55;
+}

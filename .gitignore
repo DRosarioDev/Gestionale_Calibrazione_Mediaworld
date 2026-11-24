@@ -1,0 +1,53 @@
+# ---------- Backend: Spring Boot / Gradle (Backend/calibrazione) ----------
+Backend/calibrazione/.gradle/
+Backend/calibrazione/build/
+Backend/calibrazione/bin/
+Backend/calibrazione/out/
+Backend/calibrazione/.sts4-cache/
+Backend/calibrazione/.apt_generated/
+Backend/calibrazione/.classpath
+Backend/calibrazione/.factorypath
+Backend/calibrazione/.project
+Backend/calibrazione/.settings/
+Backend/calibrazione/HELP.md
+Backend/calibrazione/API_CONTRACT.md
+Backend/calibrazione/DATABASE.md
+
+# Gradle wrapper: mantieni il jar, ignora solo i file temporanei
+Backend/calibrazione/gradle/wrapper/*.jar.tmp
+
+# ---------- Frontend: Angular (Frontend/Angular) ----------
+Frontend/Angular/node_modules/
+Frontend/Angular/dist/
+Frontend/Angular/.angular/
+Frontend/Angular/coverage/
+Frontend/Angular/out-tsc/
+Frontend/Angular/.cache/
+Frontend/Angular/*.tsbuildinfo
+Frontend/Angular/npm-debug.log*
+Frontend/Angular/yarn-debug.log*
+Frontend/Angular/yarn-error.log*
+Frontend/Angular/README.md
+
+# ---------- Variabili d'ambiente ----------
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.iws
+*.iml
+*.ipr
+*.swp
+*.swo
+
+# ---------- Sistema operativo ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Log ----------
+*.log

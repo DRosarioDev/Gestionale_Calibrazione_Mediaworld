@@ -1,0 +1,12 @@
+<div class="brand" [class.invertito]="invertito" [class.compatto]="compatto">
+  <span class="segno" aria-hidden="true">
+    <span class="lettere">MW</span>
+    <span class="punto"></span>
+  </span>
+  @if (!compatto) {
+    <span class="parola">
+      <span class="riga"><span class="media">Media</span><span class="world">World</span></span>
+      <small>Calibration Suite</small>
+    </span>
+  }
+</div>

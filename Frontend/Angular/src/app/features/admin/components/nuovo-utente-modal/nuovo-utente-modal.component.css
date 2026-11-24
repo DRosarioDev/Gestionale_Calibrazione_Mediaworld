@@ -1,0 +1,73 @@
+.banner-errore {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 11px 12px;
+  border: 1px solid #fecdd3;
+  border-radius: 9px;
+  background: var(--mw-rosso-tenue);
+  color: #b91c1c;
+  font-size: 12px;
+}
+
+.form-utente {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.password {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password .controllo {
+  padding-right: 40px;
+}
+
+.password button {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--mw-grigio-400);
+}
+.password button:hover {
+  background: var(--mw-grigio-100);
+  color: var(--mw-grigio-700);
+}
+
+.nota-credenziali {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 9px;
+  background: var(--mw-grigio-50);
+  border: 1px solid var(--mw-grigio-100);
+  color: var(--mw-grigio-500);
+}
+
+.nota-credenziali app-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.nota-credenziali p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.footer-modale {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  width: 100%;
+}

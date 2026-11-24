@@ -1,0 +1,108 @@
+<app-modal
+  [aperto]="aperto"
+  titolo="Crea un nuovo profilo"
+  sottotitolo="L’email deve appartenere al dominio aziendale &#64;mediaworld.it."
+  larghezza="560px"
+  (chiuso)="chiudi()"
+>
+  @if (errore()) {
+    <div class="banner-errore" role="alert">
+      <app-icon nome="alert" [dimensione]="16"></app-icon>
+      <span>{{ errore() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="crea()" class="form-utente">
+    <div class="griglia-campi">
+      <div class="campo">
+        <label class="etichetta" for="nome">Nome <span class="obbligatorio">*</span></label>
+        <input id="nome" type="text" class="controllo" formControlName="nome" placeholder="Mario" />
+        @if (form.controls.nome.touched && form.controls.nome.invalid) {
+          <small class="messaggio-errore">Inserisci il nome.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="etichetta" for="cognome">Cognome <span class="obbligatorio">*</span></label>
+        <input
+          id="cognome"
+          type="text"
+          class="controllo"
+          formControlName="cognome"
+          placeholder="Verdi"
+        />
+        @if (form.controls.cognome.touched && form.controls.cognome.invalid) {
+          <small class="messaggio-errore">Inserisci il cognome.</small>
+        }
+      </div>
+
+      <div class="campo campo-intero">
+        <label class="etichetta" for="email">Email aziendale <span class="obbligatorio">*</span></label>
+        <input
+          id="email"
+          type="email"
+          class="controllo"
+          formControlName="email"
+          placeholder="mario.verdi&#64;mediaworld.it"
+          autocomplete="off"
+        />
+        @if (
+          form.controls.email.touched &&
+          form.controls.email.errors?.['dominioNonValido']
+        ) {
+          <small class="messaggio-errore">Usa un indirizzo con dominio &#64;mediaworld.it.</small>
+        } @else if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="messaggio-errore">Inserisci un’email valida.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="etichetta" for="ruolo">Ruolo</label>
+        <select id="ruolo" class="controllo" formControlName="ruolo">
+          <option value="TECNICO">Tecnico</option>
+          <option value="ADMIN">Amministratore</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label class="etichetta" for="password">Password <span class="obbligatorio">*</span></label>
+        <div class="password">
+          <input
+            id="password"
+            [type]="mostraPassword() ? 'text' : 'password'"
+            class="controllo"
+            formControlName="password"
+            placeholder="Almeno 8 caratteri"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            (click)="mostraPassword.set(!mostraPassword())"
+            [attr.aria-label]="mostraPassword() ? 'Nascondi password' : 'Mostra password'"
+          >
+            <app-icon nome="eye" [dimensione]="16"></app-icon>
+          </button>
+        </div>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small class="messaggio-errore">La password deve avere almeno 8 caratteri.</small>
+        }
+      </div>
+    </div>
+
+    <div class="nota-credenziali">
+      <app-icon nome="info" [dimensione]="15"></app-icon>
+      <p>
+        Comunica email e password al nuovo operatore. Il profilo sarà attivo immediatamente e potrà
+        accedere alla piattaforma.
+      </p>
+    </div>
+
+    <div footer class="footer-modale">
+      <button type="button" class="btn btn-secondario" (click)="chiudi()">Annulla</button>
+      <button type="submit" class="btn btn-primario" [disabled]="salvataggio()">
+        <app-icon nome="plus" [dimensione]="15"></app-icon>
+        Crea profilo
+      </button>
+    </div>
+  </form>
+</app-modal>

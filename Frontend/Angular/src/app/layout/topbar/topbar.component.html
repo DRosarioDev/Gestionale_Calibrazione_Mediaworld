@@ -1,0 +1,67 @@
+<header class="topbar">
+  <button type="button" class="menu-mobile" (click)="apriMenu.emit()" aria-label="Apri menu">
+    <app-icon nome="menu" [dimensione]="20"></app-icon>
+  </button>
+
+  <form class="ricerca" (submit)="cerca($event)" role="search">
+    <app-icon nome="search" [dimensione]="17"></app-icon>
+    <input
+      type="search"
+      placeholder="Cerca per modello o codice seriale…"
+      aria-label="Cerca televisore"
+      [value]="ricerca()"
+      (input)="aggiornaRicerca($event)"
+    />
+    <kbd>Invio</kbd>
+  </form>
+
+  <div class="azioni">
+    <span class="data">{{ oggi }}</span>
+
+    <button
+      type="button"
+      class="campana"
+      (click)="vaiACalibrare()"
+      [attr.title]="daCalibrare() + ' televisori da calibrare'"
+      aria-label="Televisori da calibrare"
+    >
+      <app-icon nome="bell" [dimensione]="19"></app-icon>
+      @if (daCalibrare() > 0) {
+        <span class="pallino">{{ daCalibrare() }}</span>
+      }
+    </button>
+
+    <div class="menu-utente">
+      <button type="button" class="utente" (click)="menuAperto.set(!menuAperto())">
+        <span class="avatar">{{ inizialiUtente() }}</span>
+        <span class="testi">
+          <strong>{{ nome() }}</strong>
+          <small>{{ ruolo() }}</small>
+        </span>
+        <app-icon nome="chevron-down" [dimensione]="15"></app-icon>
+      </button>
+
+      @if (menuAperto()) {
+        <div class="dropdown">
+          <div class="intestazione">
+            <span class="avatar grande">{{ inizialiUtente() }}</span>
+            <div>
+              <strong>{{ nome() }}</strong>
+              <small>{{ utente()?.email }}</small>
+            </div>
+          </div>
+          @if (isAdmin()) {
+            <button type="button" (click)="vaiAUtenti()">
+              <app-icon nome="users" [dimensione]="16"></app-icon>
+              Gestione utenti
+            </button>
+          }
+          <button type="button" class="uscita" (click)="logout()">
+            <app-icon nome="logout" [dimensione]="16"></app-icon>
+            Esci dall’account
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

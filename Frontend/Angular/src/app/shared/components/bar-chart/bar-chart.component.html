@@ -1,0 +1,16 @@
+<div class="grafico" [style.height.px]="altezza">
+  @for (dato of dati; track dato.etichetta) {
+    <div class="colonna">
+      <span class="valore">{{ dato.valore }}</span>
+      <div class="area-barra">
+        <div
+          class="barra"
+          [class.evidenza]="dato.evidenza"
+          [style.height.%]="percentuale(dato.valore)"
+          [title]="dato.etichetta + ': ' + dato.valore"
+        ></div>
+      </div>
+      <span class="etichetta">{{ dato.etichetta }}</span>
+    </div>
+  }
+</div>

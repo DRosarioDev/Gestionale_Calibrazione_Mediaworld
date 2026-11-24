@@ -1,0 +1,13 @@
+<div class="contenitore" aria-live="polite">
+  @for (item of toast.toasts(); track item.id) {
+    <div class="toast" [class]="'toast tipo-' + item.tipo" role="status">
+      <span class="icona">
+        <app-icon [nome]="icona(item.tipo)" [dimensione]="17"></app-icon>
+      </span>
+      <p>{{ item.messaggio }}</p>
+      <button type="button" (click)="toast.rimuovi(item.id)" aria-label="Chiudi notifica">
+        <app-icon nome="x" [dimensione]="15"></app-icon>
+      </button>
+    </div>
+  }
+</div>

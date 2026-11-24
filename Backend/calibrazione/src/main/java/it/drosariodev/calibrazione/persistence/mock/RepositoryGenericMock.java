@@ -1,0 +1,73 @@
+package it.drosariodev.calibrazione.persistence.mock;
+
+import java.lang.reflect.Field;
+import java.util.*;
+
+import it.drosariodev.calibrazione.persistence.DAOException;
+
+
+public class RepositoryGenericMock {
+
+    private final Map<Class, Map<Long, Object>> beans = new HashMap<>();
+    private long prossimoId = 1;
+
+    @SuppressWarnings("unchecked")
+    public <T> T findById(long id, Class<T> classe) {
+        Map<Long, Object> mappaBeans = beans.get(classe);
+        if (mappaBeans == null) {
+            return null;
+        }
+        return (T) mappaBeans.get(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findAll(Class<T> classe) {
+        Map<Long, Object> mappaBeans = beans.get(classe);
+        if (mappaBeans == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>((Collection<? extends T>) mappaBeans.values());
+    }
+
+    public <T> void saveOrUpdate(T bean) throws DAOException {
+        try {
+            Class classe = bean.getClass();
+            Field field = classe.getDeclaredField("id");
+            field.setAccessible(true);
+            Long id = (Long) field.get(bean);
+            if (id == null || id == 0) {
+                id = getProssimoId();
+                field.set(bean, id);
+            }
+            Map<Long, Object> mappaBeans = beans.get(classe);
+            if (mappaBeans == null) {
+                mappaBeans = new HashMap<>();
+                beans.put(classe, mappaBeans);
+            }
+            mappaBeans.put(id, bean);
+        } catch (Exception ex) {
+            throw new DAOException("Impossibile cambiare il valore dell'id del bean " + bean);
+        }
+    }
+
+    public <T> void delete(T bean) throws DAOException {
+        try {
+            Class classe = bean.getClass();
+            Field field = classe.getDeclaredField("id");
+            field.setAccessible(true);
+            Map<Long, Object> mappaBeans = beans.get(classe);
+            if (mappaBeans == null) {
+                return;
+            }
+            long id = (long) field.get(bean);
+            mappaBeans.remove(id);
+        } catch (Exception ex) {
+            throw new DAOException("Impossibile leggere il valore dell'id del bean " + bean);
+        }
+    }
+
+    private long getProssimoId() {
+        return prossimoId++;
+    }
+
+}

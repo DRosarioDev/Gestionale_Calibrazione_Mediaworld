@@ -1,0 +1,13 @@
+# Contesto di build Docker (repo root)
+.git
+.gitignore
+.vscode
+.idea
+**/node_modules
+**/dist
+**/.angular
+Backend/calibrazione/build
+Backend/calibrazione/.gradle
+Backend/calibrazione/bin
+Backend/calibrazione/out
+**/*.log

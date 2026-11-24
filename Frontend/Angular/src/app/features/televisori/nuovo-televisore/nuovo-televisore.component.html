@@ -1,0 +1,218 @@
+<a routerLink="/televisori" class="link-indietro">
+  <app-icon nome="arrow-left" [dimensione]="15"></app-icon>
+  Torna ai televisori
+</a>
+
+<app-page-header
+  titolo="Nuova televisione"
+  sottotitolo="Registra un nuovo modello da calibrare. I dati resteranno modificabili."
+>
+  <a routerLink="/televisori" class="btn btn-ghost">Annulla</a>
+  <button type="button" class="btn btn-primario" (click)="salva(false)" [disabled]="invio()">
+    <app-icon nome="plus" [dimensione]="16"></app-icon>
+    Aggiungi televisione
+  </button>
+</app-page-header>
+
+@if (errore()) {
+  <div class="banner-errore" role="alert">
+    <app-icon nome="alert" [dimensione]="18"></app-icon>
+    <span>{{ errore() }}</span>
+  </div>
+}
+
+<div class="layout-nuovo">
+  <form class="card form-card" [formGroup]="form" (ngSubmit)="salva(false)">
+    <section class="sezione">
+      <header class="sezione-testata">
+        <span class="icona"><app-icon nome="tv" [dimensione]="18"></app-icon></span>
+        <div>
+          <h2>Identificazione</h2>
+          <p>Marca, modello e codice seriale univoco.</p>
+        </div>
+      </header>
+
+      <div class="griglia-campi">
+        <div class="campo">
+          <label class="etichetta" for="marca">Marca <span class="obbligatorio">*</span></label>
+          <select id="marca" class="controllo" formControlName="marca">
+            @for (marca of marche; track marca) {
+              <option [value]="marca">{{ marca }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="campo">
+          <label class="etichetta" for="modello">Modello <span class="obbligatorio">*</span></label>
+          <input
+            id="modello"
+            type="text"
+            class="controllo"
+            formControlName="modello"
+            placeholder="Es. OLED evo C4 65&quot;"
+          />
+          @if (form.controls.modello.touched && form.controls.modello.invalid) {
+            <small class="messaggio-errore">Inserisci il modello completo.</small>
+          }
+        </div>
+
+        <div class="campo campo-intero">
+          <label class="etichetta" for="seriale">
+            Codice seriale <span class="obbligatorio">*</span>
+          </label>
+          <input
+            id="seriale"
+            type="text"
+            class="controllo testo-mono"
+            formControlName="codiceSeriale"
+            placeholder="Es. MW-SAM-65QN90D-0001"
+            autocomplete="off"
+          />
+          <span class="suggerimento">
+            Il seriale deve essere univoco: viene usato per la ricerca e per l’esportazione.
+          </span>
+          @if (form.controls.codiceSeriale.touched && form.controls.codiceSeriale.invalid) {
+            <small class="messaggio-errore">Inserisci un codice seriale di almeno 4 caratteri.</small>
+          }
+        </div>
+      </div>
+    </section>
+
+    <hr class="separatore" />
+
+    <section class="sezione">
+      <header class="sezione-testata">
+        <span class="icona"><app-icon nome="monitor" [dimensione]="18"></app-icon></span>
+        <div>
+          <h2>Specifiche</h2>
+          <p>Caratteristiche tecniche del pannello.</p>
+        </div>
+      </header>
+
+      <div class="griglia-campi">
+        <div class="campo">
+          <label class="etichetta" for="pollici">Pollici <span class="obbligatorio">*</span></label>
+          <input
+            id="pollici"
+            type="number"
+            class="controllo"
+            formControlName="pollici"
+            min="10"
+            max="150"
+          />
+          @if (form.controls.pollici.touched && form.controls.pollici.invalid) {
+            <small class="messaggio-errore">Inserisci un valore tra 10 e 150.</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label class="etichetta" for="tecnologia">Tecnologia pannello</label>
+          <select id="tecnologia" class="controllo" formControlName="tecnologia">
+            @for (tecnologia of tecnologie; track tecnologia) {
+              <option [value]="tecnologia">{{ tecnologia }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <hr class="separatore" />
+
+    <section class="sezione">
+      <header class="sezione-testata">
+        <span class="icona"><app-icon nome="target" [dimensione]="18"></app-icon></span>
+        <div>
+          <h2>Note</h2>
+          <p>Indicazioni operative per il centro MediaWorld di Arese.</p>
+        </div>
+      </header>
+
+      <div class="griglia-campi">
+        <div class="campo campo-intero">
+          <label class="etichetta" for="note">Note</label>
+          <textarea
+            id="note"
+            class="controllo"
+            formControlName="note"
+            rows="3"
+            placeholder="Eventuali indicazioni per la calibrazione, posizione in esposizione, anomalie…"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <footer class="azioni-form">
+      <a routerLink="/televisori" class="btn btn-secondario">Annulla</a>
+      <button type="button" class="btn btn-secondario" (click)="salva(true)" [disabled]="invio()">
+        Salva e avvia calibrazione
+        <app-icon nome="arrow-up-right" [dimensione]="16"></app-icon>
+      </button>
+      <button type="submit" class="btn btn-primario" [disabled]="invio()">
+        <app-icon nome="check" [dimensione]="16"></app-icon>
+        Aggiungi televisione
+      </button>
+    </footer>
+  </form>
+
+  <aside class="colonna-laterale">
+    <section class="card info-card">
+      <h3>Dati registrati automaticamente</h3>
+      <div class="dato-auto">
+        <span class="icona"><app-icon nome="calendar" [dimensione]="17"></app-icon></span>
+        <div>
+          <strong>Data di aggiunta</strong>
+          <p>Viene salvata al momento della creazione.</p>
+        </div>
+      </div>
+      <div class="dato-auto">
+        <span class="icona"><app-icon nome="user" [dimensione]="17"></app-icon></span>
+        <div>
+          <strong>Operatore</strong>
+          <p>Il profilo attualmente autenticato.</p>
+        </div>
+      </div>
+      <div class="dato-auto">
+        <span class="icona"><app-icon nome="clock" [dimensione]="17"></app-icon></span>
+        <div>
+          <strong>Data di calibrazione</strong>
+          <p>Sarà registrata al termine della calibrazione.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card passi-card">
+      <h3>Come funziona</h3>
+      <ol>
+        <li>
+          <span class="numero">1</span>
+          <div>
+            <strong>Registra la TV</strong>
+            <p>Inserisci marca, modello, seriale e specifiche.</p>
+          </div>
+        </li>
+        <li>
+          <span class="numero">2</span>
+          <div>
+            <strong>Avvia la calibrazione</strong>
+            <p>Compila i parametri, il bianco e, se previsti, i colori.</p>
+          </div>
+        </li>
+        <li>
+          <span class="numero">3</span>
+          <div>
+            <strong>Esporta il report</strong>
+            <p>Scarica il file .txt e personalizzalo prima del download.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="nota-rossa">
+      <app-icon nome="info" [dimensione]="18"></app-icon>
+      <p>
+        La televisione sarà creata con stato <strong>Da calibrare</strong>. Potrai riprenderla in
+        qualsiasi momento dalla lista.
+      </p>
+    </section>
+  </aside>
+</div>

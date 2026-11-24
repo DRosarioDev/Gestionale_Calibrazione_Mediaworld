@@ -1,0 +1,42 @@
+<div
+  class="campo-range"
+  [class.accento-rosso]="accento === 'rosso'"
+  [class.accento-verde]="accento === 'verde'"
+  [class.accento-blu]="accento === 'blu'"
+  [class.accento-ambra]="accento === 'ambra'"
+  [class.disabilitato]="disabilitato"
+>
+  <div class="testata">
+    <label [attr.for]="id">{{ etichetta }}</label>
+    <div class="numero">
+      <input
+        [id]="id"
+        type="number"
+        [min]="minimo"
+        [max]="massimo"
+        [step]="passo"
+        [value]="valore ?? ''"
+        [disabled]="disabilitato"
+        (input)="onNumero($event)"
+        (blur)="onTouched()"
+      />
+      @if (unita) {
+        <span>{{ unita }}</span>
+      }
+    </div>
+  </div>
+  <input
+    class="slider"
+    type="range"
+    [min]="minimo"
+    [max]="massimo"
+    [step]="passo"
+    [value]="valore ?? minimo"
+    [disabled]="disabilitato"
+    (input)="onRange($event)"
+    (blur)="onTouched()"
+  />
+  @if (suggerimento) {
+    <small>{{ suggerimento }}</small>
+  }
+</div>

@@ -1,0 +1,29 @@
+@if (aperto) {
+  <div class="overlay" (click)="chiudi()">
+    <div
+      class="finestra"
+      [style.max-width]="larghezza"
+      role="dialog"
+      aria-modal="true"
+      (click)="$event.stopPropagation()"
+    >
+      <header>
+        <div class="testi">
+          <h2>{{ titolo }}</h2>
+          @if (sottotitolo) {
+            <p>{{ sottotitolo }}</p>
+          }
+        </div>
+        <button type="button" class="chiudi" (click)="chiudi()" aria-label="Chiudi">
+          <app-icon nome="x" [dimensione]="18"></app-icon>
+        </button>
+      </header>
+      <div class="corpo">
+        <ng-content></ng-content>
+      </div>
+      <footer>
+        <ng-content select="[footer]"></ng-content>
+      </footer>
+    </div>
+  </div>
+}

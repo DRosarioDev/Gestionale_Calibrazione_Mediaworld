@@ -1,0 +1,11 @@
+<header class="intestazione">
+  <div class="testi">
+    <h1>{{ titolo }}</h1>
+    @if (sottotitolo) {
+      <p>{{ sottotitolo }}</p>
+    }
+  </div>
+  <div class="azioni">
+    <ng-content></ng-content>
+  </div>
+</header>

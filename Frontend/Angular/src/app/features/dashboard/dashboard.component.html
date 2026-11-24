@@ -1,0 +1,183 @@
+<app-page-header titolo="Panoramica" [sottotitolo]="sottotitolo()">
+  <a routerLink="/televisori" class="btn btn-secondario">
+    <app-icon nome="tv" [dimensione]="16"></app-icon>
+    Tutti i televisori
+  </a>
+  <a routerLink="/televisori/nuovo" class="btn btn-primario">
+    <app-icon nome="plus" [dimensione]="16"></app-icon>
+    Nuova televisione
+  </a>
+</app-page-header>
+
+<section class="statistiche">
+  <app-stat-card
+    etichetta="Televisori gestiti"
+    [valore]="totale()"
+    descrizione="Parco TV del centro di Arese"
+    icona="tv"
+    colore="blu"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="Calibrati"
+    [valore]="calibrati()"
+    [descrizione]="completamento() + '% del totale completato'"
+    icona="check"
+    colore="verde"
+    [tendenza]="calibratiUltimi30Giorni() + ' negli ultimi 30gg'"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="Da calibrare"
+    [valore]="daCalibrare()"
+    descrizione="In attesa di prima calibrazione"
+    icona="clock"
+    colore="ambra"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="In calibrazione"
+    [valore]="inCalibrazione()"
+    descrizione="Lavorazioni attualmente aperte"
+    icona="sliders"
+    colore="rosso"
+  ></app-stat-card>
+</section>
+
+<section class="griglia-grafici">
+  <article class="card pannello">
+    <header class="pannello-testata">
+      <div>
+        <h2>Stato del parco TV</h2>
+        <p>Calibrati e da calibrare</p>
+      </div>
+      <span class="chip">{{ completamento() }}% completato</span>
+    </header>
+    <div class="corpo-grafico">
+      <app-donut-chart [segmenti]="perStato()" etichettaTotale="TV" [dimensione]="196"></app-donut-chart>
+      <div class="legenda">
+        @for (segmento of perStato(); track segmento.etichetta) {
+          <div class="voce-legenda">
+            <span class="colore" [style.background]="segmento.colore"></span>
+            <span class="nome">{{ segmento.etichetta }}</span>
+            <strong>{{ segmento.valore }}</strong>
+          </div>
+        }
+        <div class="progresso">
+          <div class="barra"><span [style.width.%]="completamento()"></span></div>
+          <p>{{ calibrati() }} su {{ totale() }} televisori calibrati</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="card pannello">
+    <header class="pannello-testata">
+      <div>
+        <h2>Calibrazioni nel tempo</h2>
+        <p>Ultimi 6 mesi</p>
+      </div>
+      <span class="chip neutro">Andamento mensile</span>
+    </header>
+    <div class="corpo-barra">
+      <app-bar-chart [dati]="calibrazioniPerMese()" [altezza]="176"></app-bar-chart>
+    </div>
+    <footer class="piede-pannello">
+      <span class="indicatore"></span>
+      <span>{{ calibratiUltimi30Giorni() }} calibrazioni concluse negli ultimi 30 giorni</span>
+    </footer>
+  </article>
+</section>
+
+@if (isAdmin()) {
+  <section class="banner-admin">
+    <div class="icona-admin">
+      <app-icon nome="shield" [dimensione]="22"></app-icon>
+    </div>
+    <div class="testo-admin">
+      <strong>Squadra e accessi</strong>
+      <p>
+        {{ totaleUtenti() }} profili configurati · {{ tecnici() }} tecnici attivi. Gestisci profili e
+        permessi dall’area amministrazione.
+      </p>
+    </div>
+    <a routerLink="/admin/utenti" class="btn btn-secondario btn-sm">
+      Gestisci utenti
+      <app-icon nome="chevron-right" [dimensione]="15"></app-icon>
+    </a>
+  </section>
+}
+
+<section class="griglia-liste">
+  <article class="card pannello-lista">
+    <header class="pannello-testata">
+      <div>
+        <h2>Da calibrare</h2>
+        <p>Le televisioni che richiedono attenzione</p>
+      </div>
+      <a routerLink="/televisori" [queryParams]="{ stato: 'DA_CALIBRARE' }" class="link-tutto">
+        Vedi tutti
+        <app-icon nome="chevron-right" [dimensione]="14"></app-icon>
+      </a>
+    </header>
+
+    @if (televisoriDaCalibrare().length === 0) {
+      <app-empty-state
+        icona="check"
+        titolo="Tutto in ordine"
+        messaggio="Non ci sono televisori in attesa di calibrazione."
+      ></app-empty-state>
+    } @else {
+      <div class="lista">
+        @for (tv of televisoriDaCalibrare(); track tv.id) {
+          <a class="riga-lista" [routerLink]="['/televisori', tv.id]">
+            <span class="icona-riga"><app-icon nome="tv" [dimensione]="18"></app-icon></span>
+            <span class="dettagli">
+              <strong>{{ tv.marca }} {{ tv.modello }}</strong>
+              <small>{{ tv.tecnologia }} · {{ tv.codiceSeriale }}</small>
+            </span>
+            <app-stato-badge [stato]="tv.stato"></app-stato-badge>
+            <span class="data">{{ data(tv.dataAggiunta) }}</span>
+            <span class="azione">
+              <app-icon nome="chevron-right" [dimensione]="16"></app-icon>
+            </span>
+          </a>
+        }
+      </div>
+    }
+  </article>
+
+  <article class="card pannello-lista">
+    <header class="pannello-testata">
+      <div>
+        <h2>Ultime calibrazioni</h2>
+        <p>Attività completate di recente</p>
+      </div>
+      <a routerLink="/televisori" class="link-tutto">
+        Storico
+        <app-icon nome="chevron-right" [dimensione]="14"></app-icon>
+      </a>
+    </header>
+
+    @if (ultimeCalibrazioni().length === 0) {
+      <app-empty-state
+        icona="sliders"
+        titolo="Nessuna calibrazione"
+        messaggio="Le calibrazioni completate compariranno qui."
+      ></app-empty-state>
+    } @else {
+      <div class="lista">
+        @for (tv of ultimeCalibrazioni(); track tv.id) {
+          <a class="riga-lista" [routerLink]="['/televisori', tv.id]">
+            <span class="icona-riga verde"><app-icon nome="check" [dimensione]="18"></app-icon></span>
+            <span class="dettagli">
+              <strong>{{ tv.marca }} {{ tv.modello }}</strong>
+              <small>{{ tv.calibrazione?.tecnico }} · {{ tv.tecnologia }} · {{ tv.pollici }}"</small>
+            </span>
+            <span class="data">{{ data(tv.dataCalibrazione) }}</span>
+            <span class="azione">
+              <app-icon nome="chevron-right" [dimensione]="16"></app-icon>
+            </span>
+          </a>
+        }
+      </div>
+    }
+  </article>
+</section>

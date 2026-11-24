@@ -1,0 +1,24 @@
+<div class="donut" [style.width.px]="dimensione" [style.height.px]="dimensione">
+  <svg viewBox="0 0 200 200" role="img" [attr.aria-label]="'Grafico: ' + etichettaTotale">
+    <circle class="anello-base" cx="100" cy="100" r="74" fill="none" stroke-width="17" />
+    @for (segmento of segmentiCalcolati; track segmento.etichetta) {
+      <circle
+        class="segmento"
+        cx="100"
+        cy="100"
+        r="74"
+        fill="none"
+        stroke-width="17"
+        pathLength="100"
+        [attr.stroke]="segmento.colore"
+        [attr.stroke-dasharray]="segmento.percentuale + ' ' + (100 - segmento.percentuale)"
+        [attr.stroke-dashoffset]="-segmento.offset"
+        transform="rotate(-90 100 100)"
+      />
+    }
+  </svg>
+  <div class="centro">
+    <strong>{{ totale }}</strong>
+    <span>{{ etichettaTotale }}</span>
+  </div>
+</div>

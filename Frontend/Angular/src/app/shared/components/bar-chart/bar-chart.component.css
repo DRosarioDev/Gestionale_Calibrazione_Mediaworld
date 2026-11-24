@@ -1,0 +1,50 @@
+.grafico {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.colonna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+}
+
+.valore {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--mw-grigio-600);
+}
+
+.area-barra {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 46px;
+  flex: 1;
+}
+
+.barra {
+  width: 100%;
+  border-radius: 7px 7px 3px 3px;
+  background: linear-gradient(180deg, #ff3b4f 0%, var(--mw-rosso) 100%);
+  opacity: 0.35;
+  transition: height 400ms ease;
+}
+
+.barra.evidenza {
+  opacity: 1;
+  box-shadow: 0 6px 14px -8px rgba(226, 0, 26, 0.9);
+}
+
+.etichetta {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--mw-grigio-500);
+  text-align: center;
+  white-space: nowrap;
+}

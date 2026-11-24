@@ -1,0 +1,44 @@
+.donut {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+}
+
+.anello-base {
+  stroke: var(--mw-grigio-100);
+}
+
+.segmento {
+  transition: stroke-dasharray 400ms ease;
+}
+
+.centro {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.centro strong {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--mw-grigio-900);
+}
+
+.centro span {
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mw-grigio-500);
+}

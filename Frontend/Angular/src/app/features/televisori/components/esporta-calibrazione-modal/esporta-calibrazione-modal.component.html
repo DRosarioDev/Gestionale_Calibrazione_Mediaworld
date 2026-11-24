@@ -1,0 +1,63 @@
+<app-modal
+  [aperto]="aperto"
+  titolo="Esporta report di calibrazione"
+  sottotitolo="Puoi modificare il contenuto prima di scaricare il file .txt."
+  larghezza="760px"
+  (chiuso)="chiudi()"
+>
+  <div class="modale-contenuto">
+    <div class="campo">
+      <label class="etichetta" for="nomeFile">Nome file</label>
+      <input
+        id="nomeFile"
+        type="text"
+        class="controllo testo-mono"
+        [value]="nomeFile()"
+        (input)="aggiornaNomeFile($event)"
+      />
+    </div>
+
+    <div class="editor-testata">
+      <div class="info">
+        <app-icon nome="file" [dimensione]="16"></app-icon>
+        <span>Anteprima report</span>
+        @if (modificato) {
+          <span class="modificato">Modificato</span>
+        }
+      </div>
+      <div class="strumenti">
+        <span class="contatore">{{ numeroCaratteri }} caratteri</span>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="ripristina()">
+          <app-icon nome="refresh" [dimensione]="14"></app-icon>
+          Ripristina
+        </button>
+      </div>
+    </div>
+
+    <textarea
+      class="editor"
+      rows="19"
+      spellcheck="false"
+      [value]="testo()"
+      (input)="aggiornaTesto($event)"
+      aria-label="Contenuto del report di calibrazione"
+    ></textarea>
+
+    <p class="nota">
+      <app-icon nome="info" [dimensione]="14"></app-icon>
+      Le modifiche riguardano solo il file esportato: i dati salvati nella scheda TV non cambiano.
+    </p>
+  </div>
+
+  <div footer class="footer-modale">
+    <button type="button" class="btn btn-secondario" (click)="chiudi()">Annulla</button>
+    <button type="button" class="btn btn-secondario" (click)="copia()">
+      <app-icon nome="copy" [dimensione]="15"></app-icon>
+      Copia testo
+    </button>
+    <button type="button" class="btn btn-primario" (click)="scarica()">
+      <app-icon nome="download" [dimensione]="16"></app-icon>
+      Scarica .txt
+    </button>
+  </div>
+</app-modal>

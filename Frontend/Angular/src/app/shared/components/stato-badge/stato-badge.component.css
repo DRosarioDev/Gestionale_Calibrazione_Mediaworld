@@ -1,0 +1,36 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stato-calibrato {
+  color: var(--mw-verde);
+  background: var(--mw-verde-bg);
+  border-color: var(--mw-verde-bordo);
+}
+
+.stato-in_calibrazione {
+  color: var(--mw-blu);
+  background: var(--mw-blu-bg);
+  border-color: var(--mw-blu-bordo);
+}
+
+.stato-da_calibrare {
+  color: var(--mw-ambra);
+  background: var(--mw-ambra-bg);
+  border-color: var(--mw-ambra-bordo);
+}

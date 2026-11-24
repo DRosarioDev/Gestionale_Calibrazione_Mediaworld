@@ -1,0 +1,12 @@
+<div class="vuoto">
+  <div class="icona">
+    <app-icon [nome]="icona" [dimensione]="24"></app-icon>
+  </div>
+  <h3>{{ titolo }}</h3>
+  @if (messaggio) {
+    <p>{{ messaggio }}</p>
+  }
+  <div class="azioni">
+    <ng-content></ng-content>
+  </div>
+</div>

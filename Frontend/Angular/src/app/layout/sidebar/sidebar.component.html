@@ -1,0 +1,62 @@
+<aside class="sidebar" [class.aperta]="aperta">
+  <div class="testata">
+    <app-brand-logo [invertito]="true"></app-brand-logo>
+    <button type="button" class="chiudi-mobile" (click)="chiuso.emit()" aria-label="Chiudi menu">
+      <app-icon nome="x" [dimensione]="18"></app-icon>
+    </button>
+  </div>
+
+  <div class="centro">
+    <app-icon nome="target" [dimensione]="13"></app-icon>
+    <span>Centro MediaWorld di Arese</span>
+  </div>
+
+  <nav class="navigazione">
+    <span class="sezione">Panoramica</span>
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="attivo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="chiuso.emit()"
+    >
+      <app-icon nome="dashboard" [dimensione]="18"></app-icon>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/televisori" routerLinkActive="attivo" (click)="chiuso.emit()">
+      <app-icon nome="tv" [dimensione]="18"></app-icon>
+      <span>Televisori</span>
+      @if (daCalibrare() > 0) {
+        <span class="contatore">{{ daCalibrare() }}</span>
+      }
+    </a>
+
+    <span class="sezione">Operazioni</span>
+    <a routerLink="/televisori/nuovo" routerLinkActive="attivo" (click)="chiuso.emit()">
+      <app-icon nome="plus" [dimensione]="18"></app-icon>
+      <span>Nuova televisione</span>
+    </a>
+
+    @if (isAdmin()) {
+      <span class="sezione">Amministrazione</span>
+      <a routerLink="/admin/utenti" routerLinkActive="attivo" (click)="chiuso.emit()">
+        <app-icon nome="users" [dimensione]="18"></app-icon>
+        <span>Gestione utenti</span>
+      </a>
+    }
+  </nav>
+
+  <div class="riempimento"></div>
+
+  <div class="scheda-utente">
+    <span class="avatar">{{ iniziali() }}</span>
+    <div class="dati">
+      <strong>{{ nome() }}</strong>
+      <small>{{ isAdmin() ? 'Amministratore' : 'Tecnico' }}</small>
+    </div>
+    <button type="button" class="esci" (click)="logout()" title="Esci" aria-label="Esci">
+      <app-icon nome="logout" [dimensione]="17"></app-icon>
+    </button>
+  </div>
+
+  <p class="versione">Calibration Suite · v1.0</p>
+</aside>

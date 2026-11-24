@@ -1,0 +1,83 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.segno {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--mw-rosso);
+  box-shadow: 0 8px 20px -10px rgba(226, 0, 26, 0.9);
+}
+
+.lettere {
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.06em;
+}
+
+.punto {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mw-giallo);
+}
+
+.parola {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.riga {
+  display: flex;
+  align-items: baseline;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.04em;
+}
+
+.media {
+  color: var(--mw-nero);
+}
+
+.world {
+  color: var(--mw-rosso);
+}
+
+small {
+  margin-top: 5px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--mw-grigio-500);
+}
+
+.invertito .media {
+  color: #fff;
+}
+
+.invertito .world {
+  color: #ff4051;
+}
+
+.invertito small {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.compatto .segno {
+  width: 40px;
+  height: 40px;
+}

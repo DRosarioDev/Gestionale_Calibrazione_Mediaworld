@@ -1,0 +1,48 @@
+# Blueprint Render: un solo web service (Docker) + PostgreSQL.
+# Al primo deploy Render chiede il valore di APP_ADMIN_PASSWORD.
+services:
+  - type: web
+    name: gestionale-calibrazione
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      # Profilo con persistenza reale su PostgreSQL.
+      - key: SPRING_PROFILES_ACTIVE
+        value: postgres
+
+      # Render fornisce la stringa postgresql://...; DataSourceConfig la
+      # converte automaticamente in un URL JDBC.
+      - key: DB_URL
+        fromDatabase:
+          name: calibrazione-db
+          property: connectionString
+
+      # Chiave di firma dei token JWT, generata da Render.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Amministratore creato al primo avvio (idempotente).
+      - key: APP_SEED_ADMIN
+        value: "true"
+      - key: APP_ADMIN_EMAIL
+        value: admin@mediaworld.it
+      - key: APP_ADMIN_PASSWORD
+        sync: false
+
+      # Dati demo (5 utenti e 20 TV). Lasciare "false" su un URL pubblico:
+      # i dati demo includono l'account admin@mediaworld.it con password
+      # nota, che ha i permessi di amministratore.
+      - key: APP_SEED_DEMO
+        value: "false"
+
+databases:
+  - name: calibrazione-db
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: "17"
+    databaseName: calibrazione
+    user: calibrazione

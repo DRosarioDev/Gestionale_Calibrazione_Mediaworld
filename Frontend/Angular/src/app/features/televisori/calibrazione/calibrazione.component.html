@@ -1,0 +1,435 @@
+<a [routerLink]="['/televisori', id()]" class="link-indietro">
+  <app-icon nome="arrow-left" [dimensione]="15"></app-icon>
+  Torna alla scheda TV
+</a>
+
+@if (televisore(); as tv) {
+  <header class="intestazione">
+    <div class="testi">
+      <span class="occhiello">
+        <app-icon nome="sliders" [dimensione]="13"></app-icon>
+        Scheda di calibrazione
+      </span>
+      <h1>{{ tv.marca }} {{ tv.modello }}</h1>
+      <div class="meta">
+        <span class="seriale">{{ tv.codiceSeriale }}</span>
+        <span class="punto"></span>
+        <app-stato-badge [stato]="tv.stato"></app-stato-badge>
+      </div>
+    </div>
+    <div class="azioni">
+      <a [routerLink]="['/televisori', tv.id]" class="btn btn-secondario">Annulla</a>
+      <button type="button" class="btn btn-primario" (click)="salva()" [disabled]="salvataggio()">
+        <app-icon nome="check" [dimensione]="16"></app-icon>
+        Salva calibrazione
+      </button>
+    </div>
+  </header>
+
+  <ol class="passi card">
+    <li class="completato">
+      <span class="numero"><app-icon nome="check" [dimensione]="13"></app-icon></span>
+      <div><strong>Dati TV</strong><small>Anagrafica e specifiche</small></div>
+    </li>
+    <li class="attivo">
+      <span class="numero">2</span>
+      <div><strong>Calibrazione</strong><small>Parametri, bianco e colori</small></div>
+    </li>
+    <li>
+      <span class="numero">3</span>
+      <div><strong>Report</strong><small>Esporta il file .txt</small></div>
+    </li>
+  </ol>
+
+  @if (esistente()) {
+    <div class="banner-info">
+      <app-icon nome="info" [dimensione]="17"></app-icon>
+      <span>
+        Stai ricalibrando una televisione già calibrata il {{ data(tv.dataCalibrazione) }}. I valori
+        precedenti sono stati caricati e verranno aggiornati al salvataggio.
+      </span>
+    </div>
+  }
+
+  <div class="layout-calibrazione">
+    <aside class="laterale">
+      <section class="card scheda-tv">
+        <div class="testata-tv">
+          <span class="iconone"><app-icon nome="tv" [dimensione]="26"></app-icon></span>
+          <div>
+            <span class="marca">{{ tv.marca }}</span>
+            <strong>{{ tv.modello }}</strong>
+          </div>
+        </div>
+
+        <dl class="dati">
+          <div>
+            <dt>Codice seriale</dt>
+            <dd class="seriale">{{ tv.codiceSeriale }}</dd>
+          </div>
+          <div>
+            <dt>Tecnologia</dt>
+            <dd>{{ tv.tecnologia }}</dd>
+          </div>
+          <div>
+            <dt>Dimensione</dt>
+            <dd>{{ tv.pollici }}"</dd>
+          </div>
+          <div>
+            <dt>Data aggiunta</dt>
+            <dd>{{ data(tv.dataAggiunta) }}</dd>
+          </div>
+          @if (tv.dataCalibrazione) {
+            <div>
+              <dt>Ultima calibrazione</dt>
+              <dd>{{ dataOra(tv.dataCalibrazione) }}</dd>
+            </div>
+          }
+        </dl>
+
+        @if (tv.note) {
+          <div class="nota-tv">
+            <span>Note</span>
+            <p>{{ tv.note }}</p>
+          </div>
+        }
+      </section>
+
+      <section class="card suggerimenti">
+        <h3>
+          <app-icon nome="sparkles" [dimensione]="15"></app-icon>
+          Buone pratiche
+        </h3>
+        <ul>
+          <li>Lascia la TV accesa per almeno 30 minuti prima di iniziare.</li>
+          <li>Usa pattern di riferimento e verifica la scala dei grigi.</li>
+          <li>Controlla clipping, banding e uniformità del pannello.</li>
+        </ul>
+      </section>
+
+      <div class="nota-laterale">
+        <app-icon nome="calendar" [dimensione]="16"></app-icon>
+        <p>
+          Data e tecnico della calibrazione saranno registrati automaticamente al salvataggio.
+        </p>
+      </div>
+    </aside>
+
+    <form class="form-calibrazione" [formGroup]="form" (ngSubmit)="salva()">
+      <section class="card sezione">
+        <header class="sezione-testata con-azione">
+          <span class="icona"><app-icon nome="sliders" [dimensione]="19"></app-icon></span>
+          <div class="testi-sezione">
+            <h2>Parametri personalizzati</h2>
+            <p>Ogni televisione ha i suoi parametri: aggiungi nome e valore liberamente.</p>
+          </div>
+          <button type="button" class="btn btn-secondario btn-sm" (click)="aggiungiParametro()">
+            <app-icon nome="plus" [dimensione]="14"></app-icon>
+            Aggiungi parametro
+          </button>
+        </header>
+
+        <div class="parametri-lista" formArrayName="parametri">
+          @for (gruppo of parametri; track gruppo; let i = $index) {
+            <div class="parametro-riga" [formGroupName]="i">
+              <div class="campo parametro-nome">
+                <label class="etichetta" [for]="'parametro-nome-' + i">Parametro</label>
+                <input
+                  [id]="'parametro-nome-' + i"
+                  class="controllo"
+                  type="text"
+                  formControlName="etichetta"
+                  placeholder="es. Luminosità, Temperatura colore…"
+                />
+              </div>
+              <div class="campo parametro-valore">
+                <label class="etichetta" [for]="'parametro-valore-' + i">Valore</label>
+                <input
+                  [id]="'parametro-valore-' + i"
+                  class="controllo"
+                  type="text"
+                  formControlName="valore"
+                  placeholder="es. 45, Film, Caldo 2…"
+                />
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondario btn-icona rimuovi-parametro"
+                (click)="rimuoviParametro(i)"
+                title="Rimuovi parametro"
+                aria-label="Rimuovi parametro"
+              >
+                <app-icon nome="trash" [dimensione]="16"></app-icon>
+              </button>
+            </div>
+          } @empty {
+            <p class="nessun-parametro">
+              <app-icon nome="info" [dimensione]="15"></app-icon>
+              Nessun parametro aggiunto. Usa “Aggiungi parametro” per registrare i valori di questa
+              televisione.
+            </p>
+          }
+        </div>
+      </section>
+
+      <section class="card sezione">
+        <header class="sezione-testata">
+          <span class="icona"><app-icon nome="sun" [dimensione]="19"></app-icon></span>
+          <div>
+            <h2>Bilanciamento del bianco</h2>
+            <p>Guadagno e offset per i canali R, G e B.</p>
+          </div>
+        </header>
+
+        <div class="gruppi-bianco">
+          <div class="gruppo-bianco">
+            <div class="testata-gruppo">
+              <strong>Bianco Gain</strong>
+              <small>Guadagno per canale</small>
+            </div>
+            <div class="griglia-bianco" formGroupName="biancoGain">
+              <app-range-field
+                etichetta="Rosso (R)"
+                formControlName="r"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="rosso"
+              ></app-range-field>
+              <app-range-field
+                etichetta="Verde (G)"
+                formControlName="g"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="verde"
+              ></app-range-field>
+              <app-range-field
+                etichetta="Blu (B)"
+                formControlName="b"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="blu"
+              ></app-range-field>
+            </div>
+          </div>
+
+          <div class="gruppo-bianco">
+            <div class="testata-gruppo">
+              <strong>Bianco Offset</strong>
+              <small>Correzione dei bassi</small>
+            </div>
+            <div class="griglia-bianco" formGroupName="biancoOffset">
+              <app-range-field
+                etichetta="Rosso (R)"
+                formControlName="r"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="rosso"
+              ></app-range-field>
+              <app-range-field
+                etichetta="Verde (G)"
+                formControlName="g"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="verde"
+              ></app-range-field>
+              <app-range-field
+                etichetta="Blu (B)"
+                formControlName="b"
+                [minimo]="-50"
+                [massimo]="50"
+                accento="blu"
+              ></app-range-field>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card sezione">
+        <header class="sezione-testata con-azione">
+          <span class="icona"><app-icon nome="palette" [dimensione]="19"></app-icon></span>
+          <div class="testi-sezione">
+            <h2>Gestione colori RGBCMY</h2>
+            <p>Attiva questa sezione solo se il servizio include la regolazione dei colori.</p>
+          </div>
+          <label class="interruttore">
+            <input type="checkbox" formControlName="coloriAbilitati" />
+            <span class="interruttore-binario" aria-hidden="true"></span>
+            <span class="interruttore-testo">
+              {{ form.controls.coloriAbilitati.value ? 'Colori attivi' : 'Solo bianco/nero' }}
+            </span>
+          </label>
+        </header>
+
+        @if (form.controls.coloriAbilitati.value) {
+          <div class="barra-colori">
+            <span class="descrizione">
+              {{ modalitaColore() === 'RGB'
+                ? 'Stai modificando i valori per canale RGB (0–255).'
+                : 'Stai modificando tinta, saturazione e luminosità (HSL).' }}
+            </span>
+            <div class="segmentato" role="group" aria-label="Modalità colore">
+              <button
+                type="button"
+                [class.attivo]="modalitaColore() === 'RGB'"
+                (click)="cambiaModalita('RGB')"
+              >
+                RGB
+              </button>
+              <button
+                type="button"
+                [class.attivo]="modalitaColore() === 'HSL'"
+                (click)="cambiaModalita('HSL')"
+              >
+                HSL
+              </button>
+            </div>
+          </div>
+
+          <div class="corpo-colori" formGroupName="colori">
+            <div class="elenco-colori" role="tablist" aria-label="Colori">
+              @for (colore of colori; track colore.chiave) {
+                <button
+                  type="button"
+                  class="voce-colore"
+                  [class.attivo]="coloreSelezionato() === colore.chiave"
+                  (click)="coloreSelezionato.set(colore.chiave)"
+                  role="tab"
+                  [attr.aria-selected]="coloreSelezionato() === colore.chiave"
+                >
+                  <span class="pastiglia" [style.background]="colore.hex"></span>
+                  <span class="testo-colore">
+                    <strong>{{ colore.etichetta }}</strong>
+                    <small>{{ riassuntoColore(colore.chiave) }}</small>
+                  </span>
+                  <app-icon
+                    class="freccia"
+                    nome="chevron-right"
+                    [dimensione]="14"
+                  ></app-icon>
+                </button>
+              }
+            </div>
+
+            <div class="editor-colore" [formGroupName]="coloreSelezionato()">
+              <div class="anteprima-colore" [style.background]="anteprimaColore">
+                <span>{{ coloreAttivo.etichetta }}</span>
+                <strong>{{ dettaglioAnteprima }}</strong>
+              </div>
+
+              <div class="campi-colore">
+                @if (modalitaColore() === 'RGB') {
+                  <app-range-field
+                    [etichetta]="etichettaCanale('r')"
+                    formControlName="r"
+                    [minimo]="0"
+                    [massimo]="255"
+                    accento="rosso"
+                  ></app-range-field>
+                  <app-range-field
+                    [etichetta]="etichettaCanale('g')"
+                    formControlName="g"
+                    [minimo]="0"
+                    [massimo]="255"
+                    accento="verde"
+                  ></app-range-field>
+                  <app-range-field
+                    [etichetta]="etichettaCanale('b')"
+                    formControlName="b"
+                    [minimo]="0"
+                    [massimo]="255"
+                    accento="blu"
+                  ></app-range-field>
+                } @else {
+                  <app-range-field
+                    [etichetta]="etichettaCanale('r')"
+                    formControlName="h"
+                    [minimo]="0"
+                    [massimo]="360"
+                    unita="°"
+                  ></app-range-field>
+                  <app-range-field
+                    [etichetta]="etichettaCanale('g')"
+                    formControlName="s"
+                    [minimo]="0"
+                    [massimo]="100"
+                    unita="%"
+                  ></app-range-field>
+                  <app-range-field
+                    [etichetta]="etichettaCanale('b')"
+                    formControlName="l"
+                    [minimo]="0"
+                    [massimo]="100"
+                    unita="%"
+                  ></app-range-field>
+                }
+              </div>
+
+              <p class="nota-colore">
+                <app-icon nome="info" [dimensione]="14"></app-icon>
+                Passando da RGB a HSL i valori vengono convertiti automaticamente per mantenere lo
+                stesso colore.
+              </p>
+            </div>
+          </div>
+        } @else {
+          <div class="colori-disabilitati">
+            <app-icon nome="info" [dimensione]="17"></app-icon>
+            <span>
+              Gestione colori disattivata: verranno registrati solo i parametri e il bilanciamento
+              del bianco (servizio di sola regolazione, senza colori).
+            </span>
+          </div>
+        }
+      </section>
+
+      <section class="card sezione">
+        <header class="sezione-testata">
+          <span class="icona"><app-icon nome="file" [dimensione]="19"></app-icon></span>
+          <div>
+            <h2>Note</h2>
+            <p>Annota anomalie, strumenti utilizzati o altre indicazioni utili.</p>
+          </div>
+        </header>
+
+        <div class="griglia-campi">
+          <div class="campo campo-intero">
+            <label class="etichetta" for="note">Note della calibrazione</label>
+            <textarea
+              id="note"
+              class="controllo"
+              rows="3"
+              formControlName="note"
+              placeholder="Anomalie, condizioni di luce, strumenti utilizzati…"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <footer class="barra-finale card">
+        <div class="nota-finale">
+          <app-icon nome="calendar" [dimensione]="16"></app-icon>
+          <span>Al salvataggio verranno registrati data, tecnico e valori della calibrazione.</span>
+        </div>
+        <div class="azioni-finali">
+          <a [routerLink]="['/televisori', tv.id]" class="btn btn-secondario">Annulla</a>
+          <button type="submit" class="btn btn-primario" [disabled]="salvataggio()">
+            @if (salvataggio()) {
+              <span class="spinner"></span>
+              Salvataggio…
+            } @else {
+              <app-icon nome="check" [dimensione]="16"></app-icon>
+              Salva calibrazione
+            }
+          </button>
+        </div>
+      </footer>
+    </form>
+  </div>
+} @else {
+  <section class="card non-trovata">
+    <app-icon nome="alert" [dimensione]="26"></app-icon>
+    <h2>Televisione non trovata</h2>
+    <p>Impossibile aprire la scheda di calibrazione.</p>
+    <a routerLink="/televisori" class="btn btn-primario">Torna alla lista</a>
+  </section>
+}

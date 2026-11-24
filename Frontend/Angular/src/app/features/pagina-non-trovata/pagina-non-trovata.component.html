@@ -1,0 +1,28 @@
+<div class="pagina">
+  <header><app-brand-logo></app-brand-logo></header>
+
+  <main>
+    <div class="codice">404</div>
+    <span class="occhiello">
+      <app-icon nome="alert" [dimensione]="14"></app-icon>
+      Pagina non trovata
+    </span>
+    <h1>Questa schermata non è calibrata.</h1>
+    <p>
+      L’indirizzo richiesto non esiste o è stato spostato. Torna alla dashboard per continuare a
+      gestire le calibrazioni.
+    </p>
+
+    <div class="azioni">
+      <a routerLink="/dashboard" class="btn btn-primario">
+        <app-icon nome="dashboard" [dimensione]="16"></app-icon>
+        Torna alla dashboard
+      </a>
+      <a routerLink="/televisori" class="btn btn-secondario">Vai ai televisori</a>
+    </div>
+  </main>
+
+  <footer>
+    <span>MediaWorld · Calibration Suite</span>
+  </footer>
+</div>

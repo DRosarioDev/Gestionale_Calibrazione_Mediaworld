@@ -1,0 +1,296 @@
+<a routerLink="/televisori" class="link-indietro">
+  <app-icon nome="arrow-left" [dimensione]="15"></app-icon>
+  Torna ai televisori
+</a>
+
+@if (televisore(); as tv) {
+  <section class="testata card">
+    <div class="iconone">
+      <app-icon nome="tv" [dimensione]="30"></app-icon>
+    </div>
+    <div class="titoli">
+      <span class="marca">{{ tv.marca }}</span>
+      <h1>{{ tv.modello }}</h1>
+      <div class="meta">
+        <span class="seriale">
+          <app-icon nome="file" [dimensione]="13"></app-icon>
+          {{ tv.codiceSeriale }}
+        </span>
+        <span class="punto"></span>
+        <app-stato-badge [stato]="tv.stato"></app-stato-badge>
+      </div>
+    </div>
+    <div class="azioni">
+      @if (tv.stato === 'CALIBRATO') {
+        <button type="button" class="btn btn-secondario" (click)="avviaCalibrazione()">
+          <app-icon nome="refresh" [dimensione]="16"></app-icon>
+          Ricalibra
+        </button>
+        <button type="button" class="btn btn-primario" (click)="modaleEsporta.set(true)">
+          <app-icon nome="download" [dimensione]="16"></app-icon>
+          Esporta .txt
+        </button>
+      } @else {
+        <button type="button" class="btn btn-primario" (click)="avviaCalibrazione()">
+          <app-icon nome="sliders" [dimensione]="16"></app-icon>
+          {{ tv.stato === 'IN_CALIBRAZIONE' ? 'Riprendi calibrazione' : 'Avvia calibrazione' }}
+        </button>
+      }
+      @if (isAdmin()) {
+        <button
+          type="button"
+          class="btn btn-pericolo btn-icona"
+          (click)="confermaEliminazione.set(true)"
+          title="Elimina televisione"
+          aria-label="Elimina televisione"
+        >
+          <app-icon nome="trash" [dimensione]="17"></app-icon>
+        </button>
+      }
+    </div>
+  </section>
+
+  <div class="griglia-dettaglio">
+    <div class="colonna-sinistra">
+      <section class="card dati-card">
+        <header class="testata-sezione">
+          <div>
+            <h2>Dati televisione</h2>
+            <p>Informazioni anagrafiche della televisione</p>
+          </div>
+        </header>
+        <dl class="dati">
+          <div>
+            <dt>Tecnologia</dt>
+            <dd>{{ tv.tecnologia }}</dd>
+          </div>
+          <div>
+            <dt>Dimensione</dt>
+            <dd>{{ tv.pollici }}"</dd>
+          </div>
+          <div>
+            <dt>Aggiunta il</dt>
+            <dd>{{ data(tv.dataAggiunta) }}</dd>
+          </div>
+          <div>
+            <dt>Aggiunta da</dt>
+            <dd>{{ tv.aggiuntoDa }}</dd>
+          </div>
+          <div>
+            <dt>Calibrazione</dt>
+            <dd>{{ data(tv.dataCalibrazione) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      @if (tv.note) {
+        <section class="card nota-card">
+          <header class="testata-sezione">
+            <div>
+              <h2>Note</h2>
+            </div>
+          </header>
+          <p>{{ tv.note }}</p>
+        </section>
+      }
+
+      <section class="card stato-card">
+        <div class="icona-stato" [class.calibrato]="tv.stato === 'CALIBRATO'">
+          <app-icon [nome]="tv.stato === 'CALIBRATO' ? 'check' : 'clock'" [dimensione]="20"></app-icon>
+        </div>
+        <div>
+          <h3>{{ tv.stato === 'CALIBRATO' ? 'Calibrazione completata' : 'Calibrazione da completare' }}</h3>
+          <p>
+            @if (tv.stato === 'CALIBRATO') {
+              Ultimo intervento registrato il {{ dataOra(tv.dataCalibrazione) }}
+              @if (tv.calibrazione) {
+                da {{ tv.calibrazione.tecnico }}.
+              }
+            } @else if (tv.stato === 'IN_CALIBRAZIONE') {
+              La lavorazione è aperta: riprendi la scheda per completare i valori.
+            } @else {
+              La televisione è pronta per la prima calibrazione.
+            }
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="colonna-destra">
+      @if (calibrazione; as cal) {
+        <section class="card riepilogo">
+          <header class="testata-sezione">
+            <div>
+              <h2>Valori di calibrazione</h2>
+              <p>{{ dataOra(cal.dataCalibrazione) }} · {{ cal.tecnico }}</p>
+            </div>
+          </header>
+
+          <div class="valori-immagine">
+            @for (valore of valoriImmagine; track $index) {
+              <div class="valore">
+                <span>{{ valore.etichetta }}</span>
+                <strong>{{ valore.valore }}</strong>
+              </div>
+            } @empty {
+              <p class="nessun-parametro">Nessun parametro registrato per questa calibrazione.</p>
+            }
+          </div>
+        </section>
+
+        <section class="card bianco">
+          <header class="testata-sezione">
+            <div>
+              <h2>Bilanciamento del bianco</h2>
+              <p>Guadagno e offset per canale</p>
+            </div>
+            <span class="icona-soft"><app-icon nome="sun" [dimensione]="17"></app-icon></span>
+          </header>
+
+          <div class="bianco-griglia">
+            <div class="gruppo-bianco">
+              <span class="titolo-gruppo">Bianco Gain</span>
+              <div class="canali">
+                <div class="canale r"><span>R</span><strong>{{ segno(cal.valori.biancoGain.r) }}</strong></div>
+                <div class="canale g"><span>G</span><strong>{{ segno(cal.valori.biancoGain.g) }}</strong></div>
+                <div class="canale b"><span>B</span><strong>{{ segno(cal.valori.biancoGain.b) }}</strong></div>
+              </div>
+            </div>
+            <div class="gruppo-bianco">
+              <span class="titolo-gruppo">Bianco Offset</span>
+              <div class="canali">
+                <div class="canale r"><span>R</span><strong>{{ segno(cal.valori.biancoOffset.r) }}</strong></div>
+                <div class="canale g"><span>G</span><strong>{{ segno(cal.valori.biancoOffset.g) }}</strong></div>
+                <div class="canale b"><span>B</span><strong>{{ segno(cal.valori.biancoOffset.b) }}</strong></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card colori-card">
+          <header class="testata-sezione">
+            <div>
+              <h2>Gestione colori</h2>
+              <p>Valori RGBCMY</p>
+            </div>
+            @if (cal.valori.coloriAbilitati) {
+              <span class="etichetta-tecnica">{{ cal.valori.modalitaColore }}</span>
+            }
+          </header>
+
+          @if (cal.valori.coloriAbilitati) {
+            <div class="colori-griglia">
+              @for (colore of colori; track colore.chiave) {
+                <div class="colore">
+                  <span class="pastiglia" [style.background]="colore.hex"></span>
+                  <div>
+                    <strong>{{ colore.etichetta }}</strong>
+                    <small>{{ valoreColore(colore.chiave) }}</small>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="colori-disabilitati">
+              <app-icon nome="info" [dimensione]="17"></app-icon>
+              <span>Servizio di sola regolazione: la gestione colori RGBCMY non è stata eseguita.</span>
+            </div>
+          }
+        </section>
+
+        @if (cal.note) {
+          <section class="card nota-calibrazione">
+            <header class="testata-sezione">
+              <div>
+                <h2>Note della calibrazione</h2>
+              </div>
+            </header>
+            <p>{{ cal.note }}</p>
+          </section>
+        }
+
+        <section class="card esporta-card">
+          <div class="testo-export">
+            <span class="icona-soft"><app-icon nome="download" [dimensione]="18"></app-icon></span>
+            <div>
+              <strong>Report pronto</strong>
+              <p>Esporta la scheda completa in .txt e personalizzala prima del download.</p>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondario" (click)="modaleEsporta.set(true)">
+            <app-icon nome="file" [dimensione]="15"></app-icon>
+            Apri anteprima
+          </button>
+        </section>
+      } @else {
+        <section class="card invito">
+          <div class="icona-invito">
+            <app-icon nome="sliders" [dimensione]="30"></app-icon>
+          </div>
+          <h2>Pronta per la calibrazione</h2>
+          <p>
+            Questa televisione non è ancora stata calibrata. Apri la scheda di calibrazione per
+            registrare i parametri, il bilanciamento del bianco e, se previsti, i colori.
+          </p>
+          <button type="button" class="btn btn-primario" (click)="avviaCalibrazione()">
+            <app-icon nome="play" [dimensione]="15"></app-icon>
+            Inizia la calibrazione
+          </button>
+          <span class="dettaglio-invito">
+            I dati della TV e il grafico dei colori saranno visibili durante la lavorazione.
+          </span>
+        </section>
+
+        <section class="card anteprima-vuota">
+          <header class="testata-sezione">
+            <div>
+              <h2>Valori di calibrazione</h2>
+              <p>Nessun dato disponibile</p>
+            </div>
+          </header>
+          <div class="righe-vuote">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+
+  <app-esporta-calibrazione-modal
+    [aperto]="modaleEsporta()"
+    [televisore]="tv"
+    (chiuso)="modaleEsporta.set(false)"
+  ></app-esporta-calibrazione-modal>
+
+  <app-modal
+    [aperto]="confermaEliminazione()"
+    titolo="Eliminare la televisione?"
+    sottotitolo="L’operazione non può essere annullata."
+    larghezza="460px"
+    (chiuso)="confermaEliminazione.set(false)"
+  >
+    <p class="testo-elimina">
+      Stai per eliminare <strong>{{ tv.marca }} {{ tv.modello }}</strong> ({{ tv.codiceSeriale }})
+      dall’archivio. Anche la calibrazione associata verrà rimossa.
+    </p>
+
+    <div footer class="footer-elimina">
+      <button type="button" class="btn btn-secondario" (click)="confermaEliminazione.set(false)">
+        Annulla
+      </button>
+      <button type="button" class="btn btn-primario" (click)="elimina()">
+        <app-icon nome="trash" [dimensione]="15"></app-icon>
+        Elimina definitivamente
+      </button>
+    </div>
+  </app-modal>
+} @else {
+  <section class="card non-trovata">
+    <app-icon nome="alert" [dimensione]="26"></app-icon>
+    <h2>Televisione non trovata</h2>
+    <p>Il modello richiesto non è presente nell’archivio.</p>
+    <a routerLink="/televisori" class="btn btn-primario">Torna alla lista</a>
+  </section>
+}

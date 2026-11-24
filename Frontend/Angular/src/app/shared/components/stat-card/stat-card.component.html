@@ -1,0 +1,18 @@
+<div class="stat-card" [class]="'colore-' + colore">
+  <div class="icona">
+    <app-icon [nome]="icona" [dimensione]="22"></app-icon>
+  </div>
+  <div class="contenuto">
+    <span class="etichetta">{{ etichetta }}</span>
+    <strong class="valore">{{ valore }}</strong>
+    @if (descrizione) {
+      <span class="descrizione">{{ descrizione }}</span>
+    }
+  </div>
+  @if (tendenza) {
+    <span class="tendenza">
+      <app-icon nome="trending-up" [dimensione]="13"></app-icon>
+      {{ tendenza }}
+    </span>
+  }
+</div>

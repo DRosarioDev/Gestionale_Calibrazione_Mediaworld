@@ -1,0 +1,144 @@
+<app-page-header
+  titolo="Televisori"
+  [sottotitolo]="televisoriFiltrati().length + ' di ' + totale() + ' televisioni'"
+>
+  <a routerLink="/televisori/nuovo" class="btn btn-primario">
+    <app-icon nome="plus" [dimensione]="16"></app-icon>
+    Nuova televisione
+  </a>
+</app-page-header>
+
+<section class="card barra-filtri">
+  <div class="ricerca">
+    <app-icon nome="search" [dimensione]="17"></app-icon>
+    <input
+      type="search"
+      placeholder="Cerca per modello, seriale o marca…"
+      [value]="cerca()"
+      (input)="aggiornaRicerca($event)"
+      aria-label="Cerca televisore"
+    />
+    @if (cerca()) {
+      <button type="button" class="pulisci" (click)="cerca.set('')" aria-label="Cancella ricerca">
+        <app-icon nome="x" [dimensione]="15"></app-icon>
+      </button>
+    }
+  </div>
+
+  <label class="filtro">
+    <span>Marca</span>
+    <select class="controllo" [value]="marca()" (change)="aggiornaMarca($event)">
+      <option value="TUTTE">Tutte le marche</option>
+      @for (marca of marche(); track marca) {
+        <option [value]="marca">{{ marca }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="filtro">
+    <span>Ordina per</span>
+    <select class="controllo" [value]="ordinamento()" (change)="aggiornaOrdinamento($event)">
+      <option value="recenti">Aggiunta più recente</option>
+      <option value="modello">Modello (A-Z)</option>
+      <option value="stato">Stato</option>
+      <option value="calibrazione">Ultima calibrazione</option>
+    </select>
+  </label>
+</section>
+
+<div class="chip-stati">
+  @for (filtro of filtriStato; track filtro.valore) {
+    <button
+      type="button"
+      class="chip"
+      [class.attivo]="stato() === filtro.valore"
+      (click)="impostaStato(filtro.valore)"
+    >
+      {{ filtro.etichetta }}
+      <span class="numero">{{ conteggi()[filtro.valore] }}</span>
+    </button>
+  }
+
+  @if (cerca() || marca() !== 'TUTTE' || stato() !== 'TUTTI') {
+    <button type="button" class="azzera" (click)="azzeraFiltri()">Azzera filtri</button>
+  }
+</div>
+
+<section class="card contenitore-tabella">
+  @if (televisoriFiltrati().length === 0) {
+    <app-empty-state
+      icona="search"
+      titolo="Nessuna televisione trovata"
+      messaggio="Prova a modificare la ricerca o i filtri applicati."
+    >
+      <button type="button" class="btn btn-secondario btn-sm" (click)="azzeraFiltri()">
+        Azzera filtri
+      </button>
+    </app-empty-state>
+  } @else {
+    <div class="tabella-wrap">
+      <table class="tabella">
+        <thead>
+          <tr>
+            <th>Televisione</th>
+            <th>Specifiche</th>
+            <th>Stato</th>
+            <th>Aggiunta</th>
+            <th>Calibrazione</th>
+            <th class="allineato-destra">Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tv of televisoriFiltrati(); track tv.id) {
+            <tr>
+              <td>
+                <a class="cella-tv" [routerLink]="['/televisori', tv.id]">
+                  <span class="icona-tv">
+                    <app-icon nome="tv" [dimensione]="19"></app-icon>
+                  </span>
+                  <span class="dettagli">
+                    <strong>{{ tv.marca }} {{ tv.modello }}</strong>
+                    <small class="seriale">{{ tv.codiceSeriale }}</small>
+                  </span>
+                </a>
+              </td>
+              <td>
+                <span class="specifiche">{{ tv.tecnologia }} · {{ tv.pollici }}"</span>
+              </td>
+              <td><app-stato-badge [stato]="tv.stato"></app-stato-badge></td>
+              <td class="data">{{ data(tv.dataAggiunta) }}</td>
+              <td class="data">{{ data(tv.dataCalibrazione) }}</td>
+              <td>
+                <div class="azioni">
+                  <a
+                    [routerLink]="['/televisori', tv.id]"
+                    class="btn btn-secondario btn-icona"
+                    title="Apri dettagli"
+                  >
+                    <app-icon nome="eye" [dimensione]="17"></app-icon>
+                  </a>
+                  @if (tv.stato === 'CALIBRATO') {
+                    <a
+                      [routerLink]="['/televisori', tv.id]"
+                      class="btn btn-secondario btn-sm"
+                    >
+                      Dettagli
+                    </a>
+                  } @else {
+                    <a
+                      [routerLink]="['/televisori', tv.id, 'calibrazione']"
+                      class="btn btn-primario btn-sm"
+                    >
+                      <app-icon nome="sliders" [dimensione]="15"></app-icon>
+                      {{ tv.stato === 'IN_CALIBRAZIONE' ? 'Riprendi' : 'Calibra' }}
+                    </a>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

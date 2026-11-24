@@ -1,0 +1,139 @@
+<app-page-header
+  titolo="Gestione utenti"
+  sottotitolo="Crea profili, assegna ruoli e gestisci gli accessi alla piattaforma."
+>
+  <button type="button" class="btn btn-primario" (click)="modaleNuovo.set(true)">
+    <app-icon nome="plus" [dimensione]="16"></app-icon>
+    Nuovo profilo
+  </button>
+</app-page-header>
+
+<section class="statistiche">
+  <app-stat-card
+    etichetta="Profili totali"
+    [valore]="totale()"
+    descrizione="Account configurati"
+    icona="users"
+    colore="blu"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="Amministratori"
+    [valore]="amministratori()"
+    descrizione="Accesso completo"
+    icona="shield"
+    colore="rosso"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="Tecnici attivi"
+    [valore]="tecnici()"
+    descrizione="Operatori di calibrazione"
+    icona="user"
+    colore="verde"
+  ></app-stat-card>
+  <app-stat-card
+    etichetta="Profili attivi"
+    [valore]="attivi()"
+    [descrizione]="disattivati() + ' profili disattivati'"
+    icona="check"
+    colore="ambra"
+  ></app-stat-card>
+</section>
+
+<section class="card contenitore-tabella">
+  <header class="testata-tabella">
+    <div>
+      <h2>Profili della piattaforma</h2>
+      <p>Gli amministratori possono vedere tutti i dati e gestire gli accessi.</p>
+    </div>
+    <span class="chip">{{ totale() }} account</span>
+  </header>
+
+  <div class="tabella-wrap">
+    <table class="tabella">
+      <thead>
+        <tr>
+          <th>Utente</th>
+          <th>Ruolo</th>
+          <th>Stato</th>
+          <th>Creato il</th>
+          <th class="allineato-destra">Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (utente of utentiOrdinati(); track utente.id) {
+          <tr>
+            <td>
+              <div class="cella-utente">
+                <span class="avatar" [class.admin]="utente.ruolo === 'ADMIN'">
+                  {{ iniziali(utente) }}
+                </span>
+                <div class="dettagli">
+                  <strong>
+                    {{ nome(utente) }}
+                    @if (utente.id === utenteCorrente()?.id) {
+                      <span class="tu">Tu</span>
+                    }
+                  </strong>
+                  <small>{{ utente.email }}</small>
+                </div>
+              </div>
+            </td>
+            <td><app-ruolo-badge [ruolo]="utente.ruolo"></app-ruolo-badge></td>
+            <td>
+              <span class="stato" [class.attivo]="utente.attivo">
+                <span class="punto"></span>
+                {{ utente.attivo ? 'Attivo' : 'Disattivato' }}
+              </span>
+            </td>
+            <td class="data">{{ data(utente.dataCreazione) }}</td>
+            <td>
+              <div class="azioni">
+                <button
+                  type="button"
+                  class="btn btn-secondario btn-sm"
+                  [class.pericolo]="utente.attivo"
+                  (click)="richiediCambioStato(utente)"
+                  [disabled]="utente.id === utenteCorrente()?.id"
+                >
+                  <app-icon [nome]="utente.attivo ? 'lock' : 'check'" [dimensione]="14"></app-icon>
+                  {{ utente.attivo ? 'Disattiva' : 'Attiva' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<app-nuovo-utente-modal
+  [aperto]="modaleNuovo()"
+  (creato)="onProfiloCreato($event)"
+  (chiuso)="modaleNuovo.set(false)"
+></app-nuovo-utente-modal>
+
+<app-modal
+  [aperto]="!!utenteDaDisattivare()"
+  titolo="Disattivare il profilo?"
+  sottotitolo="L’utente non potrà più accedere alla piattaforma."
+  larghezza="460px"
+  (chiuso)="utenteDaDisattivare.set(null)"
+>
+  @if (utenteDaDisattivare(); as utente) {
+    <p class="testo-conferma">
+      Stai per disattivare <strong>{{ nome(utente) }}</strong> ({{ utente.email }}). Le calibrazioni
+      già registrate resteranno disponibili.
+    </p>
+  }
+
+  <div footer class="footer-modale">
+    <button type="button" class="btn btn-secondario" (click)="utenteDaDisattivare.set(null)">
+      Annulla
+    </button>
+    <button type="button" class="btn btn-primario" (click)="confermaDisattivazione()">
+      <app-icon nome="lock" [dimensione]="15"></app-icon>
+      Disattiva profilo
+    </button>
+  </div>
+</app-modal>

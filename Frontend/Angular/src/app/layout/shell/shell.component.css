@@ -1,0 +1,54 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.area-principale {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.pagina {
+  flex: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 30px 32px 40px;
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 32px 24px;
+  font-size: 11px;
+  color: var(--mw-grigio-400);
+}
+
+.separatore-punto {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--mw-grigio-300);
+}
+
+.velo {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  border: 0;
+  background: rgba(17, 17, 22, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 1024px) {
+  .pagina {
+    padding: 22px 18px 32px;
+  }
+  .pie {
+    padding: 0 18px 20px;
+    flex-wrap: wrap;
+  }
+}

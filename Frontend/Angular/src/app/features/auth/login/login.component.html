@@ -1,0 +1,176 @@
+<div class="pagina-login">
+  <section class="pannello-marca">
+    <div class="alone"></div>
+
+    <header class="marchio">
+      <app-brand-logo [invertito]="true"></app-brand-logo>
+    </header>
+
+    <div class="contenuto-marca">
+      <span class="occhiello">
+        <app-icon nome="sparkles" [dimensione]="14"></app-icon>
+        Calibration Suite
+      </span>
+      <h1>
+        Ogni schermo,<br />
+        <span>alla massima resa.</span>
+      </h1>
+      <p>
+        Gestisci il parco televisori del centro MediaWorld di Arese, registra le calibrazioni
+        e condividi i risultati in un unico posto.
+      </p>
+
+      <ul class="vantaggi">
+        <li>
+          <span class="spunta"><app-icon nome="check" [dimensione]="13"></app-icon></span>
+          Calibrazione completa: parametri, bilanciamento e colori
+        </li>
+        <li>
+          <span class="spunta"><app-icon nome="check" [dimensione]="13"></app-icon></span>
+          Storico, ricerca per seriale e report pronti da esportare
+        </li>
+        <li>
+          <span class="spunta"><app-icon nome="check" [dimensione]="13"></app-icon></span>
+          Dashboard con stato di avanzamento in tempo reale
+        </li>
+      </ul>
+
+      <div class="anteprima">
+        <div class="anteprima-testata">
+          <span class="pallini"><i></i><i></i><i></i></span>
+          <span class="anteprima-titolo">Scheda calibrazione</span>
+          <span class="anteprima-stato">Calibrato</span>
+        </div>
+        <div class="anteprima-corpo">
+          <div class="riga">
+            <span>Luminosità</span>
+            <strong>45</strong>
+          </div>
+          <div class="riga">
+            <span>Contrasto</span>
+            <strong>90</strong>
+          </div>
+          <div class="riga">
+            <span>Gamma</span>
+            <strong>2.20</strong>
+          </div>
+          <div class="colori">
+            <i style="background: #ef4444"></i>
+            <i style="background: #22c55e"></i>
+            <i style="background: #3b82f6"></i>
+            <i style="background: #06b6d4"></i>
+            <i style="background: #d946ef"></i>
+            <i style="background: #eab308"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="piede-marca">
+      <span class="lucchetto"><app-icon nome="shield" [dimensione]="14"></app-icon></span>
+      Accesso riservato al personale MediaWorld autorizzato
+    </footer>
+  </section>
+
+  <section class="pannello-form">
+    <div class="form-wrap">
+      <div class="logo-mobile">
+        <app-brand-logo></app-brand-logo>
+      </div>
+
+      <span class="etichetta-piccola">Area riservata</span>
+      <h2>Accedi al gestionale</h2>
+      <p class="sottotitolo">Inserisci l’email aziendale e la password assegnata.</p>
+
+      @if (errore()) {
+        <div class="banner-errore" role="alert">
+          <app-icon nome="alert" [dimensione]="17"></app-icon>
+          <span>{{ errore() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="accedi()">
+        <div class="campo">
+          <label class="etichetta" for="email">Email aziendale</label>
+          <div class="input-icona">
+            <app-icon nome="mail" [dimensione]="17"></app-icon>
+            <input
+              id="email"
+              type="email"
+              class="controllo"
+              formControlName="email"
+              placeholder="nome.cognome&#64;media-saturn.com"
+              autocomplete="username"
+            />
+          </div>
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small class="messaggio-errore">Inserisci un indirizzo email valido.</small>
+          }
+        </div>
+
+        <div class="campo">
+          <label class="etichetta" for="password">Password</label>
+          <div class="input-icona">
+            <app-icon nome="lock" [dimensione]="17"></app-icon>
+            <input
+              id="password"
+              [type]="mostraPassword() ? 'text' : 'password'"
+              class="controllo con-azione"
+              formControlName="password"
+              placeholder="La tua password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="mostra"
+              (click)="mostraPassword.set(!mostraPassword())"
+              [attr.aria-label]="mostraPassword() ? 'Nascondi password' : 'Mostra password'"
+            >
+              <app-icon nome="eye" [dimensione]="17"></app-icon>
+            </button>
+          </div>
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="messaggio-errore">La password deve contenere almeno 6 caratteri.</small>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primario accedi" [disabled]="caricamento()">
+          @if (caricamento()) {
+            <span class="spinner"></span>
+            Accesso in corso…
+          } @else {
+            Accedi
+            <app-icon nome="arrow-up-right" [dimensione]="17"></app-icon>
+          }
+        </button>
+      </form>
+
+      <!-- <div class="demo">
+        <div class="demo-titolo">
+          <span>Account demo</span>
+          <span class="linea"></span>
+        </div>
+        <div class="demo-bottoni">
+          <button type="button" (click)="compilaDemo('admin')">
+            <app-icon nome="shield" [dimensione]="15"></app-icon>
+            Amministratore
+          </button>
+          <button type="button" (click)="compilaDemo('tecnico')">
+            <app-icon nome="user" [dimensione]="15"></app-icon>
+            Tecnico
+          </button>
+        </div>
+      </div> -->
+
+      <p class="nota-finale">
+        Problemi di accesso? Contatta l’IT MediaWorld o il responsabile di area.
+      </p>
+    </div>
+
+    <footer class="piede-form">
+      <span>© 2026 MediaWorld</span>
+      <span class="punto-separatore"></span>
+      <span>Calibration Suite v1.0</span>
+    </footer>
+  </section>
+</div>
