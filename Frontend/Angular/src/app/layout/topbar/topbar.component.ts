@@ -66,6 +66,11 @@ export class TopbarComponent {
     this.router.navigateByUrl('/admin/utenti');
   }
 
+  vaiAProfilo(): void {
+    this.menuAperto.set(false);
+    this.router.navigateByUrl('/profilo');
+  }
+
   logout(): void {
     this.auth.logout();
     this.televisoriService.azzera();

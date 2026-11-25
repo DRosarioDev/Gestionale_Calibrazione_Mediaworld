@@ -18,6 +18,15 @@ export interface NuovoUtente {
   password: string;
 }
 
+export interface CambiaPassword {
+  passwordAttuale: string;
+  nuovaPassword: string;
+}
+
+export interface ReimpostaPassword {
+  nuovaPassword: string;
+}
+
 export const ETICHETTE_RUOLO: Record<Ruolo, string> = {
   ADMIN: 'Amministratore',
   TECNICO: 'Tecnico',

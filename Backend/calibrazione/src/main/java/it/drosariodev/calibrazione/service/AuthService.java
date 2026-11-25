@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import it.drosariodev.calibrazione.dto.auth.LoginRequest;
 import it.drosariodev.calibrazione.dto.auth.LoginResponse;
+import it.drosariodev.calibrazione.dto.utente.CambiaPasswordRequest;
 import it.drosariodev.calibrazione.dto.utente.UtenteDTO;
 import it.drosariodev.calibrazione.model.Utente;
 import it.drosariodev.calibrazione.persistence.DAOException;
@@ -58,6 +59,26 @@ public class AuthService {
 
     public UtenteDTO utenteCorrente() throws DAOException {
         return Mapper.map(utenteCorrenteService.corrente(), UtenteDTO.class);
+    }
+
+    public void cambiaPassword(CambiaPasswordRequest request) throws DAOException {
+        Utente utente = utenteCorrenteService.corrente();
+
+        if (!passwordEncoder.matches(request.getPasswordAttuale(), utente.getPassword())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La password attuale non è corretta.");
+        }
+
+        if (passwordEncoder.matches(request.getNuovaPassword(), utente.getPassword())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La nuova password deve essere diversa da quella attuale.");
+        }
+
+        utente.setPassword(passwordEncoder.encode(request.getNuovaPassword()));
+        daoUtente.makePersistent(utente);
+        log.info("Password aggiornata dall'utente {}", utente.getEmail());
     }
 
 }

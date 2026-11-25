@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.drosariodev.calibrazione.dto.utente.AggiornaStatoUtenteRequest;
 import it.drosariodev.calibrazione.dto.utente.NuovoUtenteRequest;
+import it.drosariodev.calibrazione.dto.utente.ReimpostaPasswordRequest;
 import it.drosariodev.calibrazione.dto.utente.UtenteDTO;
 import it.drosariodev.calibrazione.persistence.DAOException;
 import it.drosariodev.calibrazione.service.UtenteService;
@@ -42,6 +43,13 @@ public class UtenteController {
     public UtenteDTO aggiornaStato(@PathVariable Long id,
                                    @Valid @RequestBody AggiornaStatoUtenteRequest request) throws DAOException {
         return utenteService.aggiornaStato(id, request.getAttivo());
+    }
+
+    @PatchMapping("/{id}/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void reimpostaPassword(@PathVariable Long id,
+                                  @Valid @RequestBody ReimpostaPasswordRequest request) throws DAOException {
+        utenteService.reimpostaPassword(id, request);
     }
 
 }

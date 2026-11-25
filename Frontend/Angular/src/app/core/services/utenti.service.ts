@@ -43,6 +43,12 @@ export class UtentiService {
     return utente;
   }
 
+  async reimpostaPassword(id: string, nuovaPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.patch<void>(`${BASE_URL}/${id}/password`, { nuovaPassword }),
+    );
+  }
+
   azzera(): void {
     this._utenti.set([]);
   }

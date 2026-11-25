@@ -55,6 +55,12 @@ const routes: Routes = [
         title: 'Calibrazione · MediaWorld Calibration Suite',
       },
       {
+        path: 'profilo',
+        loadComponent: () =>
+          import('./features/account/profilo/profilo.component').then((m) => m.ProfiloComponent),
+        title: 'Il mio account · MediaWorld Calibration Suite',
+      },
+      {
         path: 'admin/utenti',
         loadComponent: () =>
           import('./features/admin/utenti/utenti.component').then((m) => m.UtentiComponent),

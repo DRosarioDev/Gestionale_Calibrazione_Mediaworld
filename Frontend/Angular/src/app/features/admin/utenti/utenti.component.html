@@ -91,6 +91,14 @@
                 <button
                   type="button"
                   class="btn btn-secondario btn-sm"
+                  (click)="apriReimpostazione(utente)"
+                >
+                  <app-icon nome="refresh" [dimensione]="14"></app-icon>
+                  Password
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondario btn-sm"
                   [class.pericolo]="utente.attivo"
                   (click)="richiediCambioStato(utente)"
                   [disabled]="utente.id === utenteCorrente()?.id"
@@ -112,6 +120,13 @@
   (creato)="onProfiloCreato($event)"
   (chiuso)="modaleNuovo.set(false)"
 ></app-nuovo-utente-modal>
+
+<app-reimposta-password-modal
+  [aperto]="!!utentePerPassword()"
+  [utente]="utentePerPassword()"
+  (reimpostata)="onPasswordReimpostata($event)"
+  (chiuso)="utentePerPassword.set(null)"
+></app-reimposta-password-modal>
 
 <app-modal
   [aperto]="!!utenteDaDisattivare()"

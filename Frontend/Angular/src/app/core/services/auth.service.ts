@@ -62,6 +62,12 @@ export class AuthService {
     }
   }
 
+  async cambiaPassword(passwordAttuale: string, nuovaPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.patch<void>(`${BASE_URL}/password`, { passwordAttuale, nuovaPassword }),
+    );
+  }
+
   logout(): void {
     this._sessione.set(null);
     try {

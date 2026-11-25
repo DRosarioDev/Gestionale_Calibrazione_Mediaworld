@@ -1,14 +1,18 @@
 package it.drosariodev.calibrazione.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.drosariodev.calibrazione.dto.auth.LoginRequest;
 import it.drosariodev.calibrazione.dto.auth.LoginResponse;
+import it.drosariodev.calibrazione.dto.utente.CambiaPasswordRequest;
 import it.drosariodev.calibrazione.dto.utente.UtenteDTO;
 import it.drosariodev.calibrazione.persistence.DAOException;
 import it.drosariodev.calibrazione.service.AuthService;
@@ -29,6 +33,12 @@ public class AuthController {
     @GetMapping("/me")
     public UtenteDTO me() throws DAOException {
         return authService.utenteCorrente();
+    }
+
+    @PatchMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cambiaPassword(@Valid @RequestBody CambiaPasswordRequest request) throws DAOException {
+        authService.cambiaPassword(request);
     }
 
     @GetMapping("/ping")

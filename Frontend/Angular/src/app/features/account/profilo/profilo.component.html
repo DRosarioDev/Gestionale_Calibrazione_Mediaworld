@@ -1,0 +1,144 @@
+<app-page-header
+  titolo="Il mio account"
+  sottotitolo="Consulta i dati del tuo profilo e aggiorna la password di accesso."
+>
+  <a routerLink="/dashboard" class="btn btn-secondario">
+    <app-icon nome="arrow-left" [dimensione]="16"></app-icon>
+    Dashboard
+  </a>
+</app-page-header>
+
+<section class="griglia-account">
+  <article class="card scheda-profilo">
+    @if (utente(); as profilo) {
+      <header class="intestazione-profilo">
+        <span class="avatar">{{ inizialiUtente() }}</span>
+        <div class="testi">
+          <h2>{{ nome() }}</h2>
+          <p>{{ profilo.email }}</p>
+        </div>
+      </header>
+
+      <dl class="dati">
+        <div>
+          <dt>Ruolo</dt>
+          <dd><app-ruolo-badge [ruolo]="profilo.ruolo"></app-ruolo-badge></dd>
+        </div>
+        <div>
+          <dt>Stato</dt>
+          <dd>
+            <span class="stato" [class.attivo]="profilo.attivo">
+              <span class="punto"></span>
+              {{ profilo.attivo ? 'Attivo' : 'Disattivato' }}
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ profilo.email }}</dd>
+        </div>
+        <div>
+          <dt>Profilo creato il</dt>
+          <dd>{{ dataCreazione() }}</dd>
+        </div>
+      </dl>
+
+      <div class="nota">
+        <app-icon nome="info" [dimensione]="15"></app-icon>
+        <p>
+          I dati anagrafici e il ruolo sono gestiti dagli amministratori. Per modificarli contatta
+          un responsabile di area.
+        </p>
+      </div>
+    }
+  </article>
+
+  <article class="card scheda-password">
+    <header class="intestazione-password">
+      <span class="icona"><app-icon nome="lock" [dimensione]="18"></app-icon></span>
+      <div>
+        <h2>Modifica password</h2>
+        <p>Inserisci la password attuale e scegli una nuova password di almeno 8 caratteri.</p>
+      </div>
+    </header>
+
+    @if (errore()) {
+      <div class="banner-errore" role="alert">
+        <app-icon nome="alert" [dimensione]="16"></app-icon>
+        <span>{{ errore() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="salva()" class="form-password">
+      <div class="campo">
+        <label class="etichetta" for="passwordAttuale">
+          Password attuale <span class="obbligatorio">*</span>
+        </label>
+        <div class="password">
+          <input
+            id="passwordAttuale"
+            [type]="mostraPassword() ? 'text' : 'password'"
+            class="controllo"
+            formControlName="passwordAttuale"
+            placeholder="La tua password attuale"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            (click)="mostraPassword.set(!mostraPassword())"
+            [attr.aria-label]="mostraPassword() ? 'Nascondi password' : 'Mostra password'"
+          >
+            <app-icon nome="eye" [dimensione]="16"></app-icon>
+          </button>
+        </div>
+        @if (form.controls.passwordAttuale.touched && form.controls.passwordAttuale.invalid) {
+          <small class="messaggio-errore">Inserisci la password attuale.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="etichetta" for="nuovaPassword">
+          Nuova password <span class="obbligatorio">*</span>
+        </label>
+        <input
+          id="nuovaPassword"
+          [type]="mostraPassword() ? 'text' : 'password'"
+          class="controllo"
+          formControlName="nuovaPassword"
+          placeholder="Almeno 8 caratteri"
+          autocomplete="new-password"
+        />
+        @if (form.controls.nuovaPassword.touched && form.controls.nuovaPassword.invalid) {
+          <small class="messaggio-errore">La nuova password deve avere almeno 8 caratteri.</small>
+        }
+      </div>
+
+      <div class="campo">
+        <label class="etichetta" for="confermaPassword">
+          Conferma nuova password <span class="obbligatorio">*</span>
+        </label>
+        <input
+          id="confermaPassword"
+          [type]="mostraPassword() ? 'text' : 'password'"
+          class="controllo"
+          formControlName="confermaPassword"
+          placeholder="Ripeti la nuova password"
+          autocomplete="new-password"
+        />
+        @if (
+          form.controls.confermaPassword.touched &&
+          form.controls.confermaPassword.value !== form.controls.nuovaPassword.value
+        ) {
+          <small class="messaggio-errore">Le due password non coincidono.</small>
+        }
+      </div>
+
+      <div class="azioni">
+        <button type="submit" class="btn btn-primario" [disabled]="salvataggio()">
+          <app-icon nome="save" [dimensione]="15"></app-icon>
+          {{ salvataggio() ? 'Aggiornamento…' : 'Aggiorna password' }}
+        </button>
+      </div>
+    </form>
+  </article>
+</section>

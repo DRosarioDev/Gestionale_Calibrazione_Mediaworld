@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.drosariodev.calibrazione.dto.utente.NuovoUtenteRequest;
+import it.drosariodev.calibrazione.dto.utente.ReimpostaPasswordRequest;
 import it.drosariodev.calibrazione.dto.utente.UtenteDTO;
 import it.drosariodev.calibrazione.enums.ERuolo;
 import it.drosariodev.calibrazione.model.Utente;
@@ -86,6 +87,20 @@ public class UtenteService {
         log.info("Utente {} {} impostato a {}", utente.getNome(), utente.getCognome(), attivo ? "attivo" : "disattivo");
 
         return Mapper.map(utente, UtenteDTO.class);
+    }
+
+    public void reimpostaPassword(Long id, ReimpostaPasswordRequest request) throws DAOException {
+        Utente utente = trovaUtente(id);
+
+        if (passwordEncoder.matches(request.getNuovaPassword(), utente.getPassword())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La nuova password deve essere diversa da quella attuale.");
+        }
+
+        utente.setPassword(passwordEncoder.encode(request.getNuovaPassword()));
+        daoUtente.makePersistent(utente);
+        log.info("Password reimpostata dall'amministratore per {} {}", utente.getNome(), utente.getCognome());
     }
 
     private Utente trovaUtente(Long id) throws DAOException {

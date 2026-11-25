@@ -10,6 +10,7 @@ import { RuoloBadgeComponent } from '../../../shared/components/ruolo-badge/ruol
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { NuovoUtenteModalComponent } from '../components/nuovo-utente-modal/nuovo-utente-modal.component';
+import { ReimpostaPasswordModalComponent } from '../components/reimposta-password-modal/reimposta-password-modal.component';
 
 @Component({
   selector: 'app-utenti',
@@ -21,6 +22,7 @@ import { NuovoUtenteModalComponent } from '../components/nuovo-utente-modal/nuov
     IconComponent,
     ModalComponent,
     NuovoUtenteModalComponent,
+    ReimpostaPasswordModalComponent,
   ],
   templateUrl: './utenti.component.html',
   styleUrl: './utenti.component.css',
@@ -38,6 +40,7 @@ export class UtentiComponent implements OnInit {
 
   readonly modaleNuovo = signal(false);
   readonly utenteDaDisattivare = signal<Utente | null>(null);
+  readonly utentePerPassword = signal<Utente | null>(null);
   readonly caricamento = signal(false);
 
   readonly attivi = computed(() => this.utenti().filter((utente) => utente.attivo).length);
@@ -70,6 +73,14 @@ export class UtentiComponent implements OnInit {
 
   onProfiloCreato(utente: Utente): void {
     this.toast.successo(`Profilo di ${nomeCompleto(utente)} creato correttamente.`);
+  }
+
+  apriReimpostazione(utente: Utente): void {
+    this.utentePerPassword.set(utente);
+  }
+
+  onPasswordReimpostata(utente: Utente): void {
+    this.toast.successo(`Password di ${nomeCompleto(utente)} reimpostata correttamente.`);
   }
 
   richiediCambioStato(utente: Utente): void {
