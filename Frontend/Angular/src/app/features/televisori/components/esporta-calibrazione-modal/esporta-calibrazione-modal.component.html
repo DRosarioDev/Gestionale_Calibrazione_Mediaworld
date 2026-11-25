@@ -1,7 +1,7 @@
 <app-modal
   [aperto]="aperto"
   titolo="Esporta report di calibrazione"
-  sottotitolo="Puoi modificare il contenuto prima di scaricare il file .txt."
+  sottotitolo="Puoi modificare il contenuto, salvarlo nella scheda TV e scaricare il file .txt."
   larghezza="760px"
   (chiuso)="chiudi()"
 >
@@ -21,6 +21,9 @@
       <div class="info">
         <app-icon nome="file" [dimensione]="16"></app-icon>
         <span>Anteprima report</span>
+        @if (reportSalvato) {
+          <span class="salvato">Salvato</span>
+        }
         @if (modificato) {
           <span class="modificato">Modificato</span>
         }
@@ -30,6 +33,10 @@
         <button type="button" class="btn btn-ghost btn-sm" (click)="ripristina()">
           <app-icon nome="refresh" [dimensione]="14"></app-icon>
           Ripristina
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="rigenera()">
+          <app-icon nome="sliders" [dimensione]="14"></app-icon>
+          Rigenera dai dati
         </button>
       </div>
     </div>
@@ -45,7 +52,8 @@
 
     <p class="nota">
       <app-icon nome="info" [dimensione]="14"></app-icon>
-      Le modifiche riguardano solo il file esportato: i dati salvati nella scheda TV non cambiano.
+      "Salva report" memorizza il testo nella scheda della TV: alla riapertura ritrovi la versione
+      modificata. "Rigenera dai dati" ricrea il report dai valori della calibrazione.
     </p>
   </div>
 
@@ -54,6 +62,15 @@
     <button type="button" class="btn btn-secondario" (click)="copia()">
       <app-icon nome="copy" [dimensione]="15"></app-icon>
       Copia testo
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondario"
+      (click)="salvaReport()"
+      [disabled]="salvataggio()"
+    >
+      <app-icon nome="save" [dimensione]="15"></app-icon>
+      {{ salvataggio() ? 'Salvataggio...' : 'Salva report' }}
     </button>
     <button type="button" class="btn btn-primario" (click)="scarica()">
       <app-icon nome="download" [dimensione]="16"></app-icon>

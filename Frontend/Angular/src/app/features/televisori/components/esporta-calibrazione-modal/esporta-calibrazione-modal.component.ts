@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Televisore } from '../../../../core/models/televisore.model';
 import { EsportazioneService } from '../../../../core/services/esportazione.service';
+import { TelevisoriService } from '../../../../core/services/televisori.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
@@ -23,6 +24,7 @@ import { IconComponent } from '../../../../shared/components/icon/icon.component
 })
 export class EsportaCalibrazioneModalComponent implements OnChanges {
   private readonly esportazione = inject(EsportazioneService);
+  private readonly televisoriService = inject(TelevisoriService);
   private readonly toast = inject(ToastService);
 
   @Input() aperto = false;
@@ -31,6 +33,8 @@ export class EsportaCalibrazioneModalComponent implements OnChanges {
 
   readonly testo = signal('');
   readonly nomeFile = signal('');
+  readonly salvataggio = signal(false);
+  readonly salvato = signal(false);
   private testoOriginale = '';
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -41,6 +45,10 @@ export class EsportaCalibrazioneModalComponent implements OnChanges {
 
   get modificato(): boolean {
     return this.testo() !== this.testoOriginale;
+  }
+
+  get reportSalvato(): boolean {
+    return this.salvato() && !this.modificato;
   }
 
   get numeroCaratteri(): number {
@@ -59,6 +67,36 @@ export class EsportaCalibrazioneModalComponent implements OnChanges {
     this.testo.set(this.testoOriginale);
     if (this.televisore) {
       this.nomeFile.set(this.esportazione.nomeFilePredefinito(this.televisore));
+    }
+  }
+
+  rigenera(): void {
+    if (!this.televisore) return;
+    this.testo.set(this.esportazione.costruisciTesto(this.televisore));
+    this.nomeFile.set(this.esportazione.nomeFilePredefinito(this.televisore));
+  }
+
+  async salvaReport(): Promise<void> {
+    const tv = this.televisore;
+    if (!tv) return;
+
+    if (!this.testo().trim()) {
+      this.toast.errore('Il report è vuoto: scrivi il contenuto prima di salvarlo.');
+      return;
+    }
+
+    this.salvataggio.set(true);
+    try {
+      await this.televisoriService.salvaReport(tv.id, this.testo());
+      this.testoOriginale = this.testo();
+      this.salvato.set(true);
+      this.toast.successo('Report salvato nella scheda della televisione.');
+    } catch (errore: unknown) {
+      this.toast.errore(
+        errore instanceof Error ? errore.message : 'Errore durante il salvataggio del report.',
+      );
+    } finally {
+      this.salvataggio.set(false);
     }
   }
 
@@ -87,7 +125,14 @@ export class EsportaCalibrazioneModalComponent implements OnChanges {
 
   private prepara(): void {
     if (!this.televisore) return;
-    this.testoOriginale = this.esportazione.costruisciTesto(this.televisore);
+
+    const reportSalvato = this.televisore.calibrazione?.report;
+    const haReportSalvato = typeof reportSalvato === 'string' && reportSalvato.trim().length > 0;
+
+    this.testoOriginale = haReportSalvato
+      ? (reportSalvato as string)
+      : this.esportazione.costruisciTesto(this.televisore);
+    this.salvato.set(haReportSalvato);
     this.testo.set(this.testoOriginale);
     this.nomeFile.set(this.esportazione.nomeFilePredefinito(this.televisore));
   }

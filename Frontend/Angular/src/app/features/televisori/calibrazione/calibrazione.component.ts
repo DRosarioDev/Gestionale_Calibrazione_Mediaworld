@@ -22,9 +22,14 @@ import {
 } from '../../../core/models/calibrazione.model';
 import { nomeCompleto } from '../../../core/models/utente.model';
 import { formattaData, formattaDataOra } from '../../../core/utils/data.util';
+import { leggiTemplateParametri } from '../../../core/utils/template-parametri.util';
 import { StatoBadgeComponent } from '../../../shared/components/stato-badge/stato-badge.component';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { RangeFieldComponent } from '../../../shared/components/range-field/range-field.component';
+import {
+  ImportaParametriModalComponent,
+  ModalitaImportParametri,
+} from '../components/importa-parametri-modal/importa-parametri-modal.component';
 
 type GruppoParametro = FormGroup<{
   etichetta: FormControl<string>;
@@ -46,7 +51,14 @@ function etichettaNonVuota(controllo: AbstractControl<string>): ValidationErrors
 @Component({
   selector: 'app-calibrazione',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, StatoBadgeComponent, IconComponent, RangeFieldComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    StatoBadgeComponent,
+    IconComponent,
+    RangeFieldComponent,
+    ImportaParametriModalComponent,
+  ],
   templateUrl: './calibrazione.component.html',
   styleUrl: './calibrazione.component.css',
 })
@@ -64,6 +76,10 @@ export class CalibrazioneComponent implements OnInit {
   readonly coloreSelezionato = signal<ColoreBase>('rosso');
   readonly salvataggio = signal(false);
   readonly esistente = signal(false);
+  readonly templateAperto = signal(false);
+  readonly templateNomeFile = signal('');
+  readonly templateParametri = signal<ParametroCalibrazione[]>([]);
+  readonly templateRigheIgnorate = signal(0);
 
   readonly form = this.fb.nonNullable.group({
     parametri: this.fb.array<GruppoParametro>([]),
@@ -128,6 +144,104 @@ export class CalibrazioneComponent implements OnInit {
 
   rimuoviParametro(indice: number): void {
     this.form.controls.parametri.removeAt(indice);
+  }
+
+  async importaTemplate(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith('.txt')) {
+      this.toast.errore('Seleziona un file di testo con estensione .txt.');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      this.toast.errore('Il file supera 2 MB: usa un template più piccolo.');
+      return;
+    }
+
+    let contenuto: string;
+    try {
+      contenuto = await file.text();
+    } catch {
+      this.toast.errore('Impossibile leggere il file selezionato.');
+      return;
+    }
+
+    const esito = leggiTemplateParametri(contenuto);
+    if (esito.parametri.length === 0) {
+      this.toast.errore(
+        'Nessun parametro riconosciuto. Usa una riga per parametro nel formato ETICHETTA: valore.',
+      );
+      return;
+    }
+
+    this.templateNomeFile.set(file.name);
+    this.templateParametri.set(esito.parametri);
+    this.templateRigheIgnorate.set(esito.righeIgnorate);
+    this.templateAperto.set(true);
+  }
+
+  applicaTemplate(modalita: ModalitaImportParametri): void {
+    const parametri = this.templateParametri();
+    if (parametri.length === 0) {
+      this.chiudiImportazione();
+      return;
+    }
+
+    if (modalita === 'sostituisci') {
+      this.form.controls.parametri.clear();
+      for (const parametro of parametri) {
+        this.form.controls.parametri.push(
+          this.creaGruppoParametro(parametro.etichetta, parametro.valore),
+        );
+      }
+      this.toast.successo(`Parametri sostituiti con ${parametri.length} voci dal file.`);
+    } else {
+      const presenti = new Set(
+        this.form.controls.parametri.controls.map((gruppo) =>
+          gruppo.controls.etichetta.value.trim().toLowerCase(),
+        ),
+      );
+      let aggiunti = 0;
+      let saltati = 0;
+
+      for (const parametro of parametri) {
+        const chiave = parametro.etichetta.toLowerCase();
+        if (presenti.has(chiave)) {
+          saltati++;
+          continue;
+        }
+
+        presenti.add(chiave);
+        this.form.controls.parametri.push(
+          this.creaGruppoParametro(parametro.etichetta, parametro.valore),
+        );
+        aggiunti++;
+      }
+
+      if (aggiunti === 0) {
+        this.toast.info('Nessun nuovo parametro: erano già tutti presenti.');
+      } else if (saltati > 0) {
+        this.toast.successo(`${aggiunti} parametri aggiunti, ${saltati} già presenti ignorati.`);
+      } else {
+        this.toast.successo(`${aggiunti} parametri aggiunti in coda.`);
+      }
+    }
+
+    this.chiudiImportazione();
+  }
+
+  chiudiImportazione(): void {
+    this.templateAperto.set(false);
+    this.templateParametri.set([]);
+    this.templateNomeFile.set('');
+    this.templateRigheIgnorate.set(0);
   }
 
   riassuntoColore(chiave: ColoreBase): string {

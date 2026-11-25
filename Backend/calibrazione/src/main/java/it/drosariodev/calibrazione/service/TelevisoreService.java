@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import it.drosariodev.calibrazione.dto.televisore.NuovoTelevisoreRequest;
 import it.drosariodev.calibrazione.dto.televisore.SalvaCalibrazioneRequest;
+import it.drosariodev.calibrazione.dto.televisore.SalvaReportRequest;
 import it.drosariodev.calibrazione.dto.televisore.TelevisoreDTO;
 import it.drosariodev.calibrazione.enums.EStato;
 import it.drosariodev.calibrazione.model.Televisore;
@@ -100,6 +101,11 @@ public class TelevisoreService {
 
     public TelevisoreDTO salvaCalibrazione(Long id, SalvaCalibrazioneRequest request) throws DAOException {
         calibrazioneService.salva(id, request);
+        return Mapper.map(trovaTelevisore(id), TelevisoreDTO.class);
+    }
+
+    public TelevisoreDTO salvaReport(Long id, SalvaReportRequest request) throws DAOException {
+        calibrazioneService.salvaReport(id, request.getReport());
         return Mapper.map(trovaTelevisore(id), TelevisoreDTO.class);
     }
 

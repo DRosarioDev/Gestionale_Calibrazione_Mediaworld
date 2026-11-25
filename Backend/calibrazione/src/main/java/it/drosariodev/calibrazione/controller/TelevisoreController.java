@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.drosariodev.calibrazione.dto.televisore.NuovoTelevisoreRequest;
 import it.drosariodev.calibrazione.dto.televisore.SalvaCalibrazioneRequest;
+import it.drosariodev.calibrazione.dto.televisore.SalvaReportRequest;
 import it.drosariodev.calibrazione.dto.televisore.TelevisoreDTO;
 import it.drosariodev.calibrazione.persistence.DAOException;
 import it.drosariodev.calibrazione.service.TelevisoreService;
@@ -54,6 +55,12 @@ public class TelevisoreController {
     public TelevisoreDTO salvaCalibrazione(@PathVariable Long id,
                                            @Valid @RequestBody SalvaCalibrazioneRequest request) throws DAOException {
         return televisoreService.salvaCalibrazione(id, request);
+    }
+
+    @PutMapping("/{id}/calibrazione/report")
+    public TelevisoreDTO salvaReport(@PathVariable Long id,
+                                     @Valid @RequestBody SalvaReportRequest request) throws DAOException {
+        return televisoreService.salvaReport(id, request);
     }
 
     @DeleteMapping("/{id}")

@@ -39,18 +39,18 @@ import it.drosariodev.calibrazione.persistence.IDAOCalibrazione;
 public class DAOCalibrazionePostgres implements IDAOCalibrazione {
 
     private static final String SELECT_BASE = """
-            SELECT id, data_calibrazione, tecnico, note
+            SELECT id, data_calibrazione, tecnico, note, report
             FROM calibrazioni
             """;
 
     private static final String INSERT = """
-            INSERT INTO calibrazioni (data_calibrazione, tecnico, note)
-            VALUES (?, ?, ?)
+            INSERT INTO calibrazioni (data_calibrazione, tecnico, note, report)
+            VALUES (?, ?, ?, ?)
             """;
 
     private static final String UPDATE = """
             UPDATE calibrazioni
-               SET data_calibrazione = ?, tecnico = ?, note = ?
+               SET data_calibrazione = ?, tecnico = ?, note = ?, report = ?
              WHERE id = ?
             """;
 
@@ -154,12 +154,14 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
                 calibrazione.setId(PostgresJdbcSupport.insert(jdbcTemplate, INSERT,
                         calibrazione.getDataCalibrazione(),
                         calibrazione.getTecnico(),
-                        calibrazione.getNote()));
+                        calibrazione.getNote(),
+                        calibrazione.getReport()));
             } else {
                 int aggiornate = jdbcTemplate.update(UPDATE,
                         calibrazione.getDataCalibrazione(),
                         calibrazione.getTecnico(),
                         calibrazione.getNote(),
+                        calibrazione.getReport(),
                         calibrazione.getId());
                 if (aggiornate == 0) {
                     throw new DAOException("Calibrazione con id " + calibrazione.getId() + " non trovata.");
@@ -318,6 +320,7 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
         calibrazione.setDataCalibrazione(rs.getObject("data_calibrazione", LocalDateTime.class));
         calibrazione.setTecnico(rs.getString("tecnico"));
         calibrazione.setNote(rs.getString("note"));
+        calibrazione.setReport(rs.getString("report"));
         return calibrazione;
     }
 

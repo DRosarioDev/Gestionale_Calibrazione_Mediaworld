@@ -55,6 +55,14 @@ export class TelevisoriService {
     return tv;
   }
 
+  async salvaReport(id: string, report: string): Promise<Televisore> {
+    const tv = await firstValueFrom(
+      this.http.put<Televisore>(`${BASE_URL}/${id}/calibrazione/report`, { report }),
+    );
+    this.aggiornaInLista(tv);
+    return tv;
+  }
+
   async elimina(id: string): Promise<void> {
     await firstValueFrom(this.http.delete<void>(`${BASE_URL}/${id}`));
     this._televisori.update((televisori) => televisori.filter((tv) => tv.id !== id));

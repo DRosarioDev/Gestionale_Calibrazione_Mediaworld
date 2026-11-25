@@ -23,10 +23,8 @@ export class EsportazioneService {
     righe.push(sotto);
     righe.push(riga('Marca', tv.marca));
     righe.push(riga('Modello', tv.modello));
-    righe.push(riga('Codice seriale', tv.codiceSeriale || '—'));
     righe.push(riga('Pollici', `${tv.pollici}"`));
     righe.push(riga('Tecnologia', tv.tecnologia));
-    righe.push(riga('Data aggiunta', formattaDataCompleta(tv.dataAggiunta)));
 
     if (!tv.calibrazione) {
       righe.push('');
@@ -42,7 +40,6 @@ export class EsportazioneService {
     righe.push('');
     righe.push('CALIBRAZIONE');
     righe.push(sotto);
-    righe.push(riga('Data', formattaDataCompleta(cal.dataCalibrazione)));
 
     righe.push('');
     righe.push('PARAMETRI');
@@ -95,11 +92,6 @@ export class EsportazioneService {
       righe.push(cal.note.trim());
     }
 
-    righe.push('');
-    righe.push(sep);
-    righe.push(`Generato il ${formattaDataOra(new Date().toISOString())}`);
-    righe.push('MediaWorld Calibration Suite');
-    righe.push(sep);
 
     return righe.join('\r\n');
   }

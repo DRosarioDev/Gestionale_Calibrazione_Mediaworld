@@ -12,6 +12,8 @@ public class Calibrazione {
     private LocalDateTime dataCalibrazione;
     private String tecnico;
     private String note;
+    /** Report .txt personalizzato dal tecnico dopo la calibrazione. */
+    private String report;
     private Valori valori;
 
 }

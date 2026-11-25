@@ -39,6 +39,11 @@ export interface Calibrazione {
   dataCalibrazione: string;
   tecnico: string;
   note: string;
+  /**
+   * Report .txt personalizzato dal tecnico.
+   * Se assente o vuoto il report viene rigenerato dai valori della calibrazione.
+   */
+  report?: string | null;
   valori: ValoriCalibrazione;
 }
 

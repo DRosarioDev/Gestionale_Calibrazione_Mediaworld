@@ -1,0 +1,66 @@
+<app-modal
+  [aperto]="aperto"
+  titolo="Importa parametri da file"
+  [sottotitolo]="nomeFile ? 'File selezionato: ' + nomeFile : ''"
+  larghezza="620px"
+  (chiuso)="chiudi()"
+>
+  <div class="contenuto">
+    <div class="riepilogo">
+      <span class="pillola valida">
+        <app-icon nome="check" [dimensione]="14"></app-icon>
+        {{ parametri.length }} parametri pronti
+      </span>
+      @if (righeIgnorate > 0) {
+        <span class="pillola ignorata">
+          <app-icon nome="alert" [dimensione]="14"></app-icon>
+          {{ righeIgnorate }} righe ignorate
+        </span>
+      }
+    </div>
+
+    <div class="anteprima" role="region" aria-label="Anteprima parametri importati">
+      <table>
+        <thead>
+          <tr>
+            <th>Parametro</th>
+            <th>Valore</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (parametro of parametri; track $index) {
+            <tr>
+              <td>{{ parametro.etichetta }}</td>
+              <td [class.vuoto]="!parametro.valore">{{ parametro.valore || 'da compilare' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (righeIgnorate > 0) {
+      <p class="nota">
+        <app-icon nome="info" [dimensione]="14"></app-icon>
+        <span>
+          Le righe senza separatore non sono state importate. Usa il formato
+          <code>ETICHETTA: valore</code> (sono accettati anche <code>=</code>, tabulazione o due
+          spazi).
+        </span>
+      </p>
+    }
+
+    <p class="domanda">Come vuoi applicare questi parametri alla calibrazione aperta?</p>
+  </div>
+
+  <div footer class="footer-modale">
+    <button type="button" class="btn btn-secondario" (click)="chiudi()">Annulla</button>
+    <button type="button" class="btn btn-secondario" (click)="applica('aggiungi')">
+      <app-icon nome="plus" [dimensione]="15"></app-icon>
+      Aggiungi in coda
+    </button>
+    <button type="button" class="btn btn-primario" (click)="applica('sostituisci')">
+      <app-icon nome="refresh" [dimensione]="15"></app-icon>
+      Sostituisci parametri
+    </button>
+  </div>
+</app-modal>

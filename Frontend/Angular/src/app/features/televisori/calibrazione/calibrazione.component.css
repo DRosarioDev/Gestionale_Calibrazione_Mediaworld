@@ -360,6 +360,33 @@
   align-items: center;
 }
 
+.azioni-parametri {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.input-file-nascosto {
+  display: none;
+}
+
+.nota-import {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: -4px 0 14px;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--mw-grigio-500);
+}
+
+.nota-import app-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--mw-grigio-400);
+}
+
 .testi-sezione {
   flex: 1;
   min-width: 0;
@@ -823,6 +850,12 @@
   }
   .sezione-testata.con-azione {
     flex-wrap: wrap;
+  }
+  .azioni-parametri {
+    width: 100%;
+  }
+  .azioni-parametri .btn {
+    flex: 1;
   }
   .parametro-riga {
     grid-template-columns: 1fr;

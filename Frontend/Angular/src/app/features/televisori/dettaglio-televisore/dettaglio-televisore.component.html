@@ -210,8 +210,13 @@
           <div class="testo-export">
             <span class="icona-soft"><app-icon nome="download" [dimensione]="18"></app-icon></span>
             <div>
-              <strong>Report pronto</strong>
-              <p>Esporta la scheda completa in .txt e personalizzala prima del download.</p>
+              @if (tv.calibrazione?.report) {
+                <strong>Report personalizzato salvato</strong>
+                <p>La scheda .txt è stata modificata e salvata: puoi riaprirla, scaricarla o rigenerarla.</p>
+              } @else {
+                <strong>Report pronto</strong>
+                <p>Esporta la scheda completa in .txt, personalizzala e salvala nella scheda TV.</p>
+              }
             </div>
           </div>
           <button type="button" class="btn btn-secondario" (click)="modaleEsporta.set(true)">

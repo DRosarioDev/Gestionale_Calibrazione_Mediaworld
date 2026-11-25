@@ -123,11 +123,32 @@
             <h2>Parametri personalizzati</h2>
             <p>Ogni televisione ha i suoi parametri: aggiungi nome e valore liberamente.</p>
           </div>
-          <button type="button" class="btn btn-secondario btn-sm" (click)="aggiungiParametro()">
-            <app-icon nome="plus" [dimensione]="14"></app-icon>
-            Aggiungi parametro
-          </button>
+          <div class="azioni-parametri">
+            <button type="button" class="btn btn-secondario btn-sm" (click)="fileTemplate.click()">
+              <app-icon nome="upload" [dimensione]="14"></app-icon>
+              Importa .txt
+            </button>
+            <button type="button" class="btn btn-secondario btn-sm" (click)="aggiungiParametro()">
+              <app-icon nome="plus" [dimensione]="14"></app-icon>
+              Aggiungi parametro
+            </button>
+          </div>
+          <input
+            #fileTemplate
+            type="file"
+            class="input-file-nascosto"
+            accept=".txt,text/plain"
+            (change)="importaTemplate($event)"
+          />
         </header>
+
+        <p class="nota-import">
+          <app-icon nome="info" [dimensione]="14"></app-icon>
+          <span>
+            Importa un file <code>.txt</code> con una riga per parametro nel formato
+            <code>ETICHETTA: valore</code>. Potrai scegliere se sostituire o aggiungere le voci.
+          </span>
+        </p>
 
         <div class="parametri-lista" formArrayName="parametri">
           @for (gruppo of parametri; track gruppo; let i = $index) {
@@ -389,6 +410,15 @@
       </footer>
     </form>
   </div>
+
+  <app-importa-parametri-modal
+    [aperto]="templateAperto()"
+    [nomeFile]="templateNomeFile()"
+    [parametri]="templateParametri()"
+    [righeIgnorate]="templateRigheIgnorate()"
+    (chiuso)="chiudiImportazione()"
+    (confermato)="applicaTemplate($event)"
+  ></app-importa-parametri-modal>
 } @else {
   <section class="card non-trovata">
     <app-icon nome="alert" [dimensione]="26"></app-icon>

@@ -11,6 +11,8 @@ public class CalibrazioneDTO {
     private LocalDateTime dataCalibrazione;
     private String tecnico;
     private String note;
+    /** Report .txt personalizzato salvato per questa calibrazione. */
+    private String report;
     private ValoriCalibrazioneDTO valori;
 
 }

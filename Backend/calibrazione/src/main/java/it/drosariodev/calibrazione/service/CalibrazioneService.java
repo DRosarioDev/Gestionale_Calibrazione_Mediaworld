@@ -112,6 +112,28 @@ public class CalibrazioneService {
         return calibrazione;
     }
 
+    /**
+     * Salva il report .txt personalizzato dal tecnico, senza toccare valori,
+     * note, data e tecnico della calibrazione.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Calibrazione salvaReport(Long televisoreId, String report) throws DAOException {
+        Televisore televisore = trovaTelevisore(televisoreId);
+        Calibrazione calibrazione = televisore.getCalibrazione();
+        if (calibrazione == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "La televisione non è ancora stata calibrata.");
+        }
+
+        calibrazione.setReport(report == null ? "" : report);
+        daoCalibrazione.makePersistent(calibrazione);
+
+        log.info("Salvato report personalizzato della calibrazione {} della televisione con seriale {}",
+                calibrazione.getId(), televisore.getCodiceSeriale());
+
+        return calibrazione;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void elimina(Long id) throws DAOException {
         Calibrazione calibrazione = trovaCalibrazione(id);
