@@ -14,14 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import it.drosariodev.calibrazione.enums.EMarca;
-import it.drosariodev.calibrazione.enums.EModalitaColore;
 import it.drosariodev.calibrazione.enums.ERuolo;
 import it.drosariodev.calibrazione.enums.EStato;
 import it.drosariodev.calibrazione.enums.ETecnologia;
 import it.drosariodev.calibrazione.model.Calibrazione;
 import it.drosariodev.calibrazione.model.ColoreCalibrazione;
 import it.drosariodev.calibrazione.model.Colori;
-import it.drosariodev.calibrazione.model.Hsl;
 import it.drosariodev.calibrazione.model.Parametro;
 import it.drosariodev.calibrazione.model.Rgb;
 import it.drosariodev.calibrazione.model.Televisore;
@@ -151,29 +149,24 @@ public class DatiDemoSeeder implements ApplicationRunner {
     }
 
     private Calibrazione creaCalibrazione(int seme, int giorniFa, String tecnico) {
-        GeneratoreCasuale casuale = new GeneratoreCasuale(seme + 31);
-        EModalitaColore modalita = casuale.nextDouble() > 0.5
-                ? EModalitaColore.HSL
-                : EModalitaColore.RGB;
-
         Calibrazione calibrazione = new Calibrazione();
         calibrazione.setDataCalibrazione(dataGiorniFa(giorniFa, 11));
         calibrazione.setTecnico(tecnico);
         calibrazione.setNote(NOTE_CALIBRAZIONE[seme % NOTE_CALIBRAZIONE.length]);
-        calibrazione.setValori(creaValori(seme, modalita));
+        calibrazione.setValori(creaValori(seme));
         return calibrazione;
     }
 
-    private Valori creaValori(int seme, EModalitaColore modalita) {
+    private Valori creaValori(int seme) {
         GeneratoreCasuale casuale = new GeneratoreCasuale(seme);
 
         Colori colori = new Colori();
-        colori.setRosso(creaColore(casuale.intero(230, 255), casuale.intero(0, 22), casuale.intero(0, 22)));
-        colori.setVerde(creaColore(casuale.intero(0, 22), casuale.intero(215, 250), casuale.intero(0, 26)));
-        colori.setBlu(creaColore(casuale.intero(0, 22), casuale.intero(0, 26), casuale.intero(220, 255)));
-        colori.setCiano(creaColore(casuale.intero(0, 22), casuale.intero(205, 245), casuale.intero(220, 250)));
-        colori.setMagenta(creaColore(casuale.intero(215, 250), casuale.intero(0, 26), casuale.intero(215, 250)));
-        colori.setGiallo(creaColore(casuale.intero(225, 255), casuale.intero(215, 245), casuale.intero(0, 26)));
+        colori.setRosso(creaColore(casuale));
+        colori.setVerde(creaColore(casuale));
+        colori.setBlu(creaColore(casuale));
+        colori.setCiano(creaColore(casuale));
+        colori.setMagenta(creaColore(casuale));
+        colori.setGiallo(creaColore(casuale));
 
         Valori valori = new Valori();
         valori.setParametri(List.of(
@@ -186,7 +179,6 @@ public class DatiDemoSeeder implements ApplicationRunner {
         valori.setBiancoGain(creaRgb(casuale.intero(-8, 8), casuale.intero(-8, 8), casuale.intero(-8, 8)));
         valori.setBiancoOffset(creaRgb(casuale.intero(-4, 4), casuale.intero(-4, 4), casuale.intero(-4, 4)));
         valori.setColoriAbilitati(casuale.nextDouble() > 0.25);
-        valori.setModalitaColore(modalita);
         valori.setColori(colori);
         return valori;
     }
@@ -198,11 +190,11 @@ public class DatiDemoSeeder implements ApplicationRunner {
         return parametro;
     }
 
-    private ColoreCalibrazione creaColore(int r, int g, int b) {
-        Rgb rgb = creaRgb(r, g, b);
+    private ColoreCalibrazione creaColore(GeneratoreCasuale casuale) {
         ColoreCalibrazione colore = new ColoreCalibrazione();
-        colore.setRgb(rgb);
-        colore.setHsl(rgbToHsl(rgb));
+        colore.setValore1(casuale.intero(-30, 30));
+        colore.setValore2(casuale.intero(-30, 30));
+        colore.setValore3(casuale.intero(-30, 30));
         return colore;
     }
 
@@ -212,44 +204,6 @@ public class DatiDemoSeeder implements ApplicationRunner {
         rgb.setG(g);
         rgb.setB(b);
         return rgb;
-    }
-
-    private Hsl rgbToHsl(Rgb rgb) {
-        double r = limita(rgb.getR(), 0, 255) / 255.0;
-        double g = limita(rgb.getG(), 0, 255) / 255.0;
-        double b = limita(rgb.getB(), 0, 255) / 255.0;
-
-        double max = Math.max(r, Math.max(g, b));
-        double min = Math.min(r, Math.min(g, b));
-        double delta = max - min;
-
-        double h = 0;
-        if (delta != 0) {
-            if (max == r) {
-                h = ((g - b) / delta) % 6;
-            } else if (max == g) {
-                h = (b - r) / delta + 2;
-            } else {
-                h = (r - g) / delta + 4;
-            }
-            h *= 60;
-            if (h < 0) {
-                h += 360;
-            }
-        }
-
-        double l = (max + min) / 2;
-        double s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-        Hsl hsl = new Hsl();
-        hsl.setH((int) Math.round(h));
-        hsl.setS((int) Math.round(s * 100));
-        hsl.setL((int) Math.round(l * 100));
-        return hsl;
-    }
-
-    private static double limita(double valore, double minimo, double massimo) {
-        return Math.min(massimo, Math.max(minimo, valore));
     }
 
     private static LocalDateTime dataGiorniFa(int giorni) {

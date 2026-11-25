@@ -17,11 +17,9 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.drosariodev.calibrazione.enums.EModalitaColore;
 import it.drosariodev.calibrazione.model.Calibrazione;
 import it.drosariodev.calibrazione.model.ColoreCalibrazione;
 import it.drosariodev.calibrazione.model.Colori;
-import it.drosariodev.calibrazione.model.Hsl;
 import it.drosariodev.calibrazione.model.Parametro;
 import it.drosariodev.calibrazione.model.Rgb;
 import it.drosariodev.calibrazione.model.Valori;
@@ -60,8 +58,8 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
             INSERT INTO calibrazione_valori (calibrazione_id,
                                              bianco_gain_r, bianco_gain_g, bianco_gain_b,
                                              bianco_offset_r, bianco_offset_g, bianco_offset_b,
-                                             colori_abilitati, modalita_colore)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                             colori_abilitati)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT (calibrazione_id) DO UPDATE
                SET bianco_gain_r = EXCLUDED.bianco_gain_r,
                    bianco_gain_g = EXCLUDED.bianco_gain_g,
@@ -69,14 +67,13 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
                    bianco_offset_r = EXCLUDED.bianco_offset_r,
                    bianco_offset_g = EXCLUDED.bianco_offset_g,
                    bianco_offset_b = EXCLUDED.bianco_offset_b,
-                   colori_abilitati = EXCLUDED.colori_abilitati,
-                   modalita_colore = EXCLUDED.modalita_colore
+                   colori_abilitati = EXCLUDED.colori_abilitati
             """;
 
     private static final String SELECT_VALORI = """
             SELECT bianco_gain_r, bianco_gain_g, bianco_gain_b,
                    bianco_offset_r, bianco_offset_g, bianco_offset_b,
-                   colori_abilitati, modalita_colore
+                   colori_abilitati
             FROM calibrazione_valori
             WHERE calibrazione_id = ?
             """;
@@ -95,13 +92,12 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
 
     private static final String INSERT_COLORE = """
             INSERT INTO calibrazione_colori (calibrazione_id, chiave,
-                                             rgb_r, rgb_g, rgb_b,
-                                             hsl_h, hsl_s, hsl_l)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                             valore1, valore2, valore3)
+            VALUES (?, ?, ?, ?, ?)
             """;
 
     private static final String SELECT_COLORI = """
-            SELECT chiave, rgb_r, rgb_g, rgb_b, hsl_h, hsl_s, hsl_l
+            SELECT chiave, valore1, valore2, valore3
             FROM calibrazione_colori
             WHERE calibrazione_id = ?
             """;
@@ -211,8 +207,7 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
                 calibrazioneId,
                 gain.getR(), gain.getG(), gain.getB(),
                 offset.getR(), offset.getG(), offset.getB(),
-                valori.isColoriAbilitati(),
-                PostgresJdbcSupport.nomeEnum(valori.getModalitaColore()));
+                valori.isColoriAbilitati());
 
         salvaParametri(calibrazioneId, valori.getParametri());
         salvaColori(calibrazioneId, valori.getColori());
@@ -243,14 +238,13 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
     private void salvaColori(Long calibrazioneId, Colori colori) {
         for (Map.Entry<String, ColoreCalibrazione> voce : mappaColori(colori).entrySet()) {
             ColoreCalibrazione colore = voce.getValue();
-            Rgb rgb = colore.getRgb() == null ? new Rgb() : colore.getRgb();
-            Hsl hsl = colore.getHsl() == null ? new Hsl() : colore.getHsl();
 
             jdbcTemplate.update(INSERT_COLORE,
                     calibrazioneId,
                     voce.getKey(),
-                    rgb.getR(), rgb.getG(), rgb.getB(),
-                    hsl.getH(), hsl.getS(), hsl.getL());
+                    colore.getValore1(),
+                    colore.getValore2(),
+                    colore.getValore3());
         }
     }
 
@@ -280,19 +274,10 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
         Map<String, ColoreCalibrazione> mappa = new HashMap<>();
 
         RowCallbackHandler lettoreColore = rs -> {
-            Rgb rgb = new Rgb();
-            rgb.setR(rs.getInt("rgb_r"));
-            rgb.setG(rs.getInt("rgb_g"));
-            rgb.setB(rs.getInt("rgb_b"));
-
-            Hsl hsl = new Hsl();
-            hsl.setH(rs.getInt("hsl_h"));
-            hsl.setS(rs.getInt("hsl_s"));
-            hsl.setL(rs.getInt("hsl_l"));
-
             ColoreCalibrazione colore = new ColoreCalibrazione();
-            colore.setRgb(rgb);
-            colore.setHsl(hsl);
+            colore.setValore1(rs.getInt("valore1"));
+            colore.setValore2(rs.getInt("valore2"));
+            colore.setValore3(rs.getInt("valore3"));
 
             mappa.put(rs.getString("chiave"), colore);
         };
@@ -341,8 +326,6 @@ public class DAOCalibrazionePostgres implements IDAOCalibrazione {
         valori.setBiancoGain(mappaLetturaRgb(rs, "bianco_gain_"));
         valori.setBiancoOffset(mappaLetturaRgb(rs, "bianco_offset_"));
         valori.setColoriAbilitati(rs.getBoolean("colori_abilitati"));
-        valori.setModalitaColore(PostgresJdbcSupport.valoreEnum(
-                EModalitaColore.class, rs.getString("modalita_colore")));
         return valori;
     }
 

@@ -75,7 +75,12 @@ CREATE TABLE IF NOT EXISTS televisori (
 
 -- Il service salva il seriale in maiuscolo, l'indice ne garantisce
 -- comunque l'unicita' indipendentemente dal case.
-CREATE UNIQUE INDEX IF NOT EXISTS ux_televisori_seriale ON televisori (UPPER(codice_seriale));
+-- Il seriale e' opzionale: l'indice ignora i valori vuoti, cosi' piu'
+-- televisioni possono essere registrate senza codice seriale.
+DROP INDEX IF EXISTS ux_televisori_seriale;
+CREATE UNIQUE INDEX IF NOT EXISTS ux_televisori_seriale
+    ON televisori (UPPER(codice_seriale))
+    WHERE codice_seriale <> '';
 CREATE INDEX IF NOT EXISTS ix_televisori_stato ON televisori (stato);
 CREATE INDEX IF NOT EXISTS ix_televisori_data_aggiunta ON televisori (data_aggiunta DESC);
 
@@ -90,9 +95,12 @@ CREATE TABLE IF NOT EXISTS calibrazione_valori (
     bianco_offset_r INTEGER NOT NULL DEFAULT 0 CHECK (bianco_offset_r BETWEEN -50 AND 50),
     bianco_offset_g INTEGER NOT NULL DEFAULT 0 CHECK (bianco_offset_g BETWEEN -50 AND 50),
     bianco_offset_b INTEGER NOT NULL DEFAULT 0 CHECK (bianco_offset_b BETWEEN -50 AND 50),
-    colori_abilitati BOOLEAN NOT NULL DEFAULT FALSE,
-    modalita_colore  VARCHAR(10) CHECK (modalita_colore IN ('RGB', 'HSL'))
+    colori_abilitati BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+-- Migrazione: la modalita' RGB/HSL non esiste piu', i colori sono salvati
+-- direttamente come i tre valori inseriti nella TV.
+ALTER TABLE calibrazione_valori DROP COLUMN IF EXISTS modalita_colore;
 
 -- ---------------------------------------------------------------------
 -- Parametri liberi (etichetta/valore) della calibrazione
@@ -110,16 +118,26 @@ CREATE INDEX IF NOT EXISTS ix_calibrazione_parametri
 
 -- ---------------------------------------------------------------------
 -- Colori RGBCMY della calibrazione (una riga per colore)
+-- Ogni colore ha esattamente i tre valori che il tecnico inserisce nella
+-- TV: nessuna conversione RGB/HSL e nessun limite di intervallo.
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS calibrazione_colori (
     calibrazione_id BIGINT      NOT NULL REFERENCES calibrazioni (id) ON DELETE CASCADE,
     chiave          VARCHAR(10) NOT NULL
         CHECK (chiave IN ('rosso', 'verde', 'blu', 'ciano', 'magenta', 'giallo')),
-    rgb_r           INTEGER NOT NULL CHECK (rgb_r BETWEEN 0 AND 255),
-    rgb_g           INTEGER NOT NULL CHECK (rgb_g BETWEEN 0 AND 255),
-    rgb_b           INTEGER NOT NULL CHECK (rgb_b BETWEEN 0 AND 255),
-    hsl_h           INTEGER NOT NULL CHECK (hsl_h BETWEEN 0 AND 360),
-    hsl_s           INTEGER NOT NULL CHECK (hsl_s BETWEEN 0 AND 100),
-    hsl_l           INTEGER NOT NULL CHECK (hsl_l BETWEEN 0 AND 100),
+    valore1         INTEGER NOT NULL,
+    valore2         INTEGER NOT NULL,
+    valore3         INTEGER NOT NULL,
     PRIMARY KEY (calibrazione_id, chiave)
 );
+
+-- Migrazione idempotente dal vecchio schema RGB/HSL.
+ALTER TABLE calibrazione_colori ADD COLUMN IF NOT EXISTS valore1 INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE calibrazione_colori ADD COLUMN IF NOT EXISTS valore2 INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE calibrazione_colori ADD COLUMN IF NOT EXISTS valore3 INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS rgb_r;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS rgb_g;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS rgb_b;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS hsl_h;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS hsl_s;
+ALTER TABLE calibrazione_colori DROP COLUMN IF EXISTS hsl_l;

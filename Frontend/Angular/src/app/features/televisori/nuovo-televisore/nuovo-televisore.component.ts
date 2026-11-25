@@ -29,7 +29,7 @@ export class NuovoTelevisoreComponent {
   readonly form = this.fb.nonNullable.group({
     marca: [MARCHE[0] as string, [Validators.required]],
     modello: ['', [Validators.required, Validators.minLength(2)]],
-    codiceSeriale: ['', [Validators.required, Validators.minLength(4)]],
+    codiceSeriale: ['', [Validators.maxLength(100)]],
     pollici: [55, [Validators.required, Validators.min(10), Validators.max(150)]],
     tecnologia: [TECNOLOGIE[0] as string, [Validators.required]],
     note: [''],

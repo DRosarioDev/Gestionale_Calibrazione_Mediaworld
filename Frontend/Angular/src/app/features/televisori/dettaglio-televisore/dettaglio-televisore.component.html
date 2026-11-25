@@ -14,7 +14,7 @@
       <div class="meta">
         <span class="seriale">
           <app-icon nome="file" [dimensione]="13"></app-icon>
-          {{ tv.codiceSeriale }}
+          {{ tv.codiceSeriale || 'Senza seriale' }}
         </span>
         <span class="punto"></span>
         <app-stato-badge [stato]="tv.stato"></app-stato-badge>
@@ -173,9 +173,6 @@
               <h2>Gestione colori</h2>
               <p>Valori RGBCMY</p>
             </div>
-            @if (cal.valori.coloriAbilitati) {
-              <span class="etichetta-tecnica">{{ cal.valori.modalitaColore }}</span>
-            }
           </header>
 
           @if (cal.valori.coloriAbilitati) {
@@ -272,7 +269,7 @@
     (chiuso)="confermaEliminazione.set(false)"
   >
     <p class="testo-elimina">
-      Stai per eliminare <strong>{{ tv.marca }} {{ tv.modello }}</strong> ({{ tv.codiceSeriale }})
+      Stai per eliminare <strong>{{ tv.marca }} {{ tv.modello }}</strong> ({{ tv.codiceSeriale || 'senza seriale' }})
       dall’archivio. Anche la calibrazione associata verrà rimossa.
     </p>
 

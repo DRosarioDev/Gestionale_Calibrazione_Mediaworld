@@ -23,7 +23,7 @@ export class EsportazioneService {
     righe.push(sotto);
     righe.push(riga('Marca', tv.marca));
     righe.push(riga('Modello', tv.modello));
-    righe.push(riga('Codice seriale', tv.codiceSeriale));
+    righe.push(riga('Codice seriale', tv.codiceSeriale || '—'));
     righe.push(riga('Pollici', `${tv.pollici}"`));
     righe.push(riga('Tecnologia', tv.tecnologia));
     righe.push(riga('Data aggiunta', formattaDataCompleta(tv.dataAggiunta)));
@@ -73,25 +73,16 @@ export class EsportazioneService {
 
     if (valori.coloriAbilitati) {
       righe.push('');
-      righe.push(`COLORI (${valori.modalitaColore})`);
+      righe.push('COLORI');
       righe.push(sotto);
       for (const colore of COLORI) {
         const dati = valori.colori[colore.chiave];
-        if (valori.modalitaColore === 'RGB') {
-          righe.push(
-            riga(
-              colore.etichetta,
-              `R ${String(dati.rgb.r).padStart(3)}  G ${String(dati.rgb.g).padStart(3)}  B ${String(dati.rgb.b).padStart(3)}`,
-            ),
-          );
-        } else {
-          righe.push(
-            riga(
-              colore.etichetta,
-              `H ${String(dati.hsl.h).padStart(3)}°  S ${String(dati.hsl.s).padStart(3)}%  L ${String(dati.hsl.l).padStart(3)}%`,
-            ),
-          );
-        }
+        righe.push(
+          riga(
+            colore.etichetta,
+            `${String(dati.valore1).padStart(4)}  ${String(dati.valore2).padStart(4)}  ${String(dati.valore3).padStart(4)}`,
+          ),
+        );
       }
     } else {
       righe.push('');
@@ -115,7 +106,8 @@ export class EsportazioneService {
 
   nomeFilePredefinito(tv: Televisore): string {
     const data = dataPerFile(tv.dataCalibrazione);
-    return `MediaWorld_calibrazione_${nomeFileSicuro(tv.codiceSeriale)}_${data}.txt`;
+    const identificativo = nomeFileSicuro(tv.codiceSeriale) || nomeFileSicuro(tv.modello) || 'tv';
+    return `MediaWorld_calibrazione_${identificativo}_${data}.txt`;
   }
 
   scarica(nomeFile: string, contenuto: string): void {

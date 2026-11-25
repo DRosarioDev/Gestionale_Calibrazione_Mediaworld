@@ -2,7 +2,6 @@ package it.drosariodev.calibrazione.model;
 
 import java.util.List;
 
-import it.drosariodev.calibrazione.enums.EModalitaColore;
 import lombok.Data;
 
 @Data
@@ -12,7 +11,6 @@ public class Valori {
     private Rgb biancoGain;
     private Rgb biancoOffset;
     private boolean coloriAbilitati;
-    private EModalitaColore modalitaColore;
     private Colori colori;
 
 }

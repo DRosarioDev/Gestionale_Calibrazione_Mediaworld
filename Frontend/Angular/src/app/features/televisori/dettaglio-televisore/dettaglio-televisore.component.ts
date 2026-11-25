@@ -78,10 +78,7 @@ export class DettaglioTelevisoreComponent implements OnInit {
     const calibrazione = this.calibrazione;
     if (!calibrazione) return '—';
     const colore = calibrazione.valori.colori[chiave];
-    if (calibrazione.valori.modalitaColore === 'RGB') {
-      return `R ${colore.rgb.r} · G ${colore.rgb.g} · B ${colore.rgb.b}`;
-    }
-    return `H ${colore.hsl.h}° · S ${colore.hsl.s}% · L ${colore.hsl.l}%`;
+    return `${colore.valore1} · ${colore.valore2} · ${colore.valore3}`;
   }
 
   elimina(): void {

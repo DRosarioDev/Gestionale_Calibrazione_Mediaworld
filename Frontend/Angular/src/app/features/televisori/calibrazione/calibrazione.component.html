@@ -12,7 +12,7 @@
       </span>
       <h1>{{ tv.marca }} {{ tv.modello }}</h1>
       <div class="meta">
-        <span class="seriale">{{ tv.codiceSeriale }}</span>
+        <span class="seriale">{{ tv.codiceSeriale || 'Senza seriale' }}</span>
         <span class="punto"></span>
         <app-stato-badge [stato]="tv.stato"></app-stato-badge>
       </div>
@@ -65,7 +65,7 @@
         <dl class="dati">
           <div>
             <dt>Codice seriale</dt>
-            <dd class="seriale">{{ tv.codiceSeriale }}</dd>
+            <dd class="seriale">{{ tv.codiceSeriale || '—' }}</dd>
           </div>
           <div>
             <dt>Tecnologia</dt>
@@ -263,29 +263,11 @@
         @if (form.controls.coloriAbilitati.value) {
           <div class="barra-colori">
             <span class="descrizione">
-              {{ modalitaColore() === 'RGB'
-                ? 'Stai modificando i valori per canale RGB (0–255).'
-                : 'Stai modificando tinta, saturazione e luminosità (HSL).' }}
+              Inserisci i tre valori esattamente come compaiono nel menu colore della TV.
             </span>
-            <div class="segmentato" role="group" aria-label="Modalità colore">
-              <button
-                type="button"
-                [class.attivo]="modalitaColore() === 'RGB'"
-                (click)="cambiaModalita('RGB')"
-              >
-                RGB
-              </button>
-              <button
-                type="button"
-                [class.attivo]="modalitaColore() === 'HSL'"
-                (click)="cambiaModalita('HSL')"
-              >
-                HSL
-              </button>
-            </div>
           </div>
 
-          <div class="corpo-colori" formGroupName="colori">
+          <div class="corpo-colori">
             <div class="elenco-colori" role="tablist" aria-label="Colori">
               @for (colore of colori; track colore.chiave) {
                 <button
@@ -310,64 +292,46 @@
               }
             </div>
 
-            <div class="editor-colore" [formGroupName]="coloreSelezionato()">
-              <div class="anteprima-colore" [style.background]="anteprimaColore">
+            <div class="editor-colore">
+              <div class="anteprima-colore" [style.background]="coloreAttivo.hex">
                 <span>{{ coloreAttivo.etichetta }}</span>
-                <strong>{{ dettaglioAnteprima }}</strong>
+                <strong>{{ dettaglioColore }}</strong>
               </div>
 
-              <div class="campi-colore">
-                @if (modalitaColore() === 'RGB') {
-                  <app-range-field
-                    [etichetta]="etichettaCanale('r')"
-                    formControlName="r"
-                    [minimo]="0"
-                    [massimo]="255"
-                    accento="rosso"
-                  ></app-range-field>
-                  <app-range-field
-                    [etichetta]="etichettaCanale('g')"
-                    formControlName="g"
-                    [minimo]="0"
-                    [massimo]="255"
-                    accento="verde"
-                  ></app-range-field>
-                  <app-range-field
-                    [etichetta]="etichettaCanale('b')"
-                    formControlName="b"
-                    [minimo]="0"
-                    [massimo]="255"
-                    accento="blu"
-                  ></app-range-field>
-                } @else {
-                  <app-range-field
-                    [etichetta]="etichettaCanale('r')"
-                    formControlName="h"
-                    [minimo]="0"
-                    [massimo]="360"
-                    unita="°"
-                  ></app-range-field>
-                  <app-range-field
-                    [etichetta]="etichettaCanale('g')"
-                    formControlName="s"
-                    [minimo]="0"
-                    [massimo]="100"
-                    unita="%"
-                  ></app-range-field>
-                  <app-range-field
-                    [etichetta]="etichettaCanale('b')"
-                    formControlName="l"
-                    [minimo]="0"
-                    [massimo]="100"
-                    unita="%"
-                  ></app-range-field>
-                }
+              <div class="campi-colore griglia-valori">
+                <div class="campo">
+                  <label class="etichetta" for="colore-valore-1">Valore 1</label>
+                  <input
+                    id="colore-valore-1"
+                    type="number"
+                    class="controllo"
+                    [formControl]="controlloColore('valore1')"
+                  />
+                </div>
+                <div class="campo">
+                  <label class="etichetta" for="colore-valore-2">Valore 2</label>
+                  <input
+                    id="colore-valore-2"
+                    type="number"
+                    class="controllo"
+                    [formControl]="controlloColore('valore2')"
+                  />
+                </div>
+                <div class="campo">
+                  <label class="etichetta" for="colore-valore-3">Valore 3</label>
+                  <input
+                    id="colore-valore-3"
+                    type="number"
+                    class="controllo"
+                    [formControl]="controlloColore('valore3')"
+                  />
+                </div>
               </div>
 
               <p class="nota-colore">
                 <app-icon nome="info" [dimensione]="14"></app-icon>
-                Passando da RGB a HSL i valori vengono convertiti automaticamente per mantenere lo
-                stesso colore.
+                I tre valori sono quelli mostrati dalla TV: l’ordine e il nome dei canali possono
+                cambiare in base al modello.
               </p>
             </div>
           </div>
