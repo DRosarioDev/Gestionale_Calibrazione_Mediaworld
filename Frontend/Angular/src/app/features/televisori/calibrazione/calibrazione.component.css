@@ -691,6 +691,18 @@
   gap: 7px;
 }
 
+.griglia-valori {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .griglia-valori {
+    grid-template-columns: 1fr;
+  }
+}
+
 .nota-colore {
   display: flex;
   align-items: flex-start;

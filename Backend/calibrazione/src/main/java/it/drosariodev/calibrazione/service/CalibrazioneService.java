@@ -12,11 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.drosariodev.calibrazione.dto.televisore.CalibrazioneDTO;
+import it.drosariodev.calibrazione.dto.televisore.ColoreCalibrazioneDTO;
+import it.drosariodev.calibrazione.dto.televisore.ColoriDTO;
 import it.drosariodev.calibrazione.dto.televisore.ParametroCalibrazioneDTO;
 import it.drosariodev.calibrazione.dto.televisore.SalvaCalibrazioneRequest;
 import it.drosariodev.calibrazione.enums.EStato;
 import it.drosariodev.calibrazione.model.Calibrazione;
+import it.drosariodev.calibrazione.model.ColoreCalibrazione;
+import it.drosariodev.calibrazione.model.Colori;
 import it.drosariodev.calibrazione.model.Parametro;
+import it.drosariodev.calibrazione.model.Rgb;
 import it.drosariodev.calibrazione.model.Televisore;
 import it.drosariodev.calibrazione.model.Utente;
 import it.drosariodev.calibrazione.model.Valori;
@@ -77,17 +82,17 @@ public class CalibrazioneService {
         if (calibrazione == null) {
             calibrazione = new Calibrazione();
         }
-        Mapper.map(request, calibrazione);
 
-        // ModelMapper aggiorna le liste esistenti per indice: per evitare che i
-        // parametri rimossi restino salvati, la lista viene sostituita in blocco.
-        Valori valori = calibrazione.getValori();
-        if (valori == null) {
-            valori = new Valori();
-            calibrazione.setValori(valori);
-        }
+        // I valori annidati vengono ricostruiti in blocco: in questo modo i
+        // parametri/colori rimossi dal form non restano salvati e ogni colore
+        // conserva i propri tre valori senza riutilizzare oggetti precedenti.
+        Valori valori = new Valori();
+        valori.setBiancoGain(Mapper.map(request.getValori().getBiancoGain(), Rgb.class));
+        valori.setBiancoOffset(Mapper.map(request.getValori().getBiancoOffset(), Rgb.class));
         valori.setParametri(mappaParametri(request.getValori().getParametri()));
         valori.setColoriAbilitati(request.getValori().isColoriAbilitati());
+        valori.setColori(mappaColori(request.getValori().getColori()));
+        calibrazione.setValori(valori);
 
         LocalDateTime dataCalibrazione = LocalDateTime.now();
         calibrazione.setDataCalibrazione(dataCalibrazione);
@@ -147,6 +152,25 @@ public class CalibrazioneService {
             mappati.add(parametro);
         }
         return mappati;
+    }
+
+    private Colori mappaColori(ColoriDTO dto) {
+        Colori colori = new Colori();
+        colori.setRosso(mappaColore(dto.getRosso()));
+        colori.setVerde(mappaColore(dto.getVerde()));
+        colori.setBlu(mappaColore(dto.getBlu()));
+        colori.setCiano(mappaColore(dto.getCiano()));
+        colori.setMagenta(mappaColore(dto.getMagenta()));
+        colori.setGiallo(mappaColore(dto.getGiallo()));
+        return colori;
+    }
+
+    private ColoreCalibrazione mappaColore(ColoreCalibrazioneDTO dto) {
+        ColoreCalibrazione colore = new ColoreCalibrazione();
+        colore.setValore1(dto.getValore1());
+        colore.setValore2(dto.getValore2());
+        colore.setValore3(dto.getValore3());
+        return colore;
     }
 
     private Calibrazione trovaCalibrazione(Long id) throws DAOException {

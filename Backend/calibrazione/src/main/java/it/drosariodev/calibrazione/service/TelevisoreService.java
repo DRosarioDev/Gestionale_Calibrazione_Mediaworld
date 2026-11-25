@@ -52,8 +52,12 @@ public class TelevisoreService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tecnologia non valida.");
         }
 
-        String codiceSeriale = request.getCodiceSeriale().trim().toUpperCase(Locale.ROOT);
-        if (daoTelevisore.findByCodiceSeriale(codiceSeriale) != null) {
+        // Il codice seriale e' facoltativo: se assente viene salvato come stringa
+        // vuota, che l'indice univoco parziale ignora.
+        String codiceSeriale = request.getCodiceSeriale() == null
+                ? ""
+                : request.getCodiceSeriale().trim().toUpperCase(Locale.ROOT);
+        if (!codiceSeriale.isEmpty() && daoTelevisore.findByCodiceSeriale(codiceSeriale) != null) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Esiste già una televisione con questo codice seriale.");
@@ -80,9 +84,11 @@ public class TelevisoreService {
         Televisore televisore = trovaTelevisore(id);
 
         if (televisore.getStato() == EStato.CALIBRATO) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "La televisione è già stata calibrata.");
+            // throw new ResponseStatusException(
+            //         HttpStatus.CONFLICT,
+            //         "La televisione è già stata calibrata.");
+            televisore.setStato(EStato.IN_CALIBRAZIONE);
+            return Mapper.map(televisore, TelevisoreDTO.class);
         }
 
         televisore.setStato(EStato.IN_CALIBRAZIONE);

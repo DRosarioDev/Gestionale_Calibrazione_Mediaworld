@@ -1,6 +1,5 @@
 package it.drosariodev.calibrazione.dto.televisore;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -8,11 +7,12 @@ import lombok.Data;
 public class ColoreCalibrazioneDTO {
 
     @NotNull
-    @Valid
-    private RgbDTO rgb;
+    private Integer valore1;
 
     @NotNull
-    @Valid
-    private HslDTO hsl;
+    private Integer valore2;
+
+    @NotNull
+    private Integer valore3;
 
 }

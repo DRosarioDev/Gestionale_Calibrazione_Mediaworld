@@ -17,13 +17,11 @@ import {
   COLORI,
   ColoreBase,
   ColoreCalibrazione,
-  ModalitaColore,
   ParametroCalibrazione,
   ValoriCalibrazione,
 } from '../../../core/models/calibrazione.model';
 import { nomeCompleto } from '../../../core/models/utente.model';
 import { formattaData, formattaDataOra } from '../../../core/utils/data.util';
-import { hslCss, rgbToHsl, hslToRgb } from '../../../core/utils/colore.util';
 import { StatoBadgeComponent } from '../../../shared/components/stato-badge/stato-badge.component';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { RangeFieldComponent } from '../../../shared/components/range-field/range-field.component';
@@ -32,6 +30,14 @@ type GruppoParametro = FormGroup<{
   etichetta: FormControl<string>;
   valore: FormControl<string>;
 }>;
+
+type GruppoColore = FormGroup<{
+  valore1: FormControl<number>;
+  valore2: FormControl<number>;
+  valore3: FormControl<number>;
+}>;
+
+type CampoColore = 'valore1' | 'valore2' | 'valore3';
 
 function etichettaNonVuota(controllo: AbstractControl<string>): ValidationErrors | null {
   return controllo.value.trim().length > 0 ? null : { required: true };
@@ -55,7 +61,6 @@ export class CalibrazioneComponent implements OnInit {
   readonly id = signal('');
   readonly televisore = computed(() => this.televisoriService.getById(this.id()));
   readonly colori = COLORI;
-  readonly modalitaColore = signal<ModalitaColore>('RGB');
   readonly coloreSelezionato = signal<ColoreBase>('rosso');
   readonly salvataggio = signal(false);
   readonly esistente = signal(false);
@@ -74,12 +79,12 @@ export class CalibrazioneComponent implements OnInit {
     }),
     coloriAbilitati: [true],
     colori: this.fb.nonNullable.group({
-      rosso: this.creaGruppoColore(255, 0, 0),
-      verde: this.creaGruppoColore(0, 255, 0),
-      blu: this.creaGruppoColore(0, 0, 255),
-      ciano: this.creaGruppoColore(0, 255, 255),
-      magenta: this.creaGruppoColore(255, 0, 255),
-      giallo: this.creaGruppoColore(255, 255, 0),
+      rosso: this.creaGruppoColore(),
+      verde: this.creaGruppoColore(),
+      blu: this.creaGruppoColore(),
+      ciano: this.creaGruppoColore(),
+      magenta: this.creaGruppoColore(),
+      giallo: this.creaGruppoColore(),
     }),
     note: [''],
   });
@@ -113,16 +118,8 @@ export class CalibrazioneComponent implements OnInit {
     return this.colori.find((colore) => colore.chiave === this.coloreSelezionato()) ?? this.colori[0];
   }
 
-  get anteprimaColore(): string {
-    return hslCss(this.hslColoreSelezionato());
-  }
-
-  get dettaglioAnteprima(): string {
-    const gruppo = this.form.controls.colori.controls[this.coloreSelezionato()];
-    if (this.modalitaColore() === 'RGB') {
-      return `R ${gruppo.controls.r.value} · G ${gruppo.controls.g.value} · B ${gruppo.controls.b.value}`;
-    }
-    return `H ${gruppo.controls.h.value}° · S ${gruppo.controls.s.value}% · L ${gruppo.controls.l.value}%`;
+  get dettaglioColore(): string {
+    return this.riassuntoColore(this.coloreSelezionato());
   }
 
   aggiungiParametro(): void {
@@ -133,25 +130,13 @@ export class CalibrazioneComponent implements OnInit {
     this.form.controls.parametri.removeAt(indice);
   }
 
-  cambiaModalita(modalita: ModalitaColore): void {
-    if (modalita === this.modalitaColore()) return;
-    this.sincronizzaColori(this.modalitaColore());
-    this.modalitaColore.set(modalita);
-  }
-
   riassuntoColore(chiave: ColoreBase): string {
     const gruppo = this.form.controls.colori.controls[chiave];
-    if (this.modalitaColore() === 'RGB') {
-      return `${gruppo.controls.r.value} · ${gruppo.controls.g.value} · ${gruppo.controls.b.value}`;
-    }
-    return `${gruppo.controls.h.value}° · ${gruppo.controls.s.value}% · ${gruppo.controls.l.value}%`;
+    return `${gruppo.controls.valore1.value} · ${gruppo.controls.valore2.value} · ${gruppo.controls.valore3.value}`;
   }
 
-  etichettaCanale(canale: 'r' | 'g' | 'b'): string {
-    if (this.modalitaColore() === 'RGB') {
-      return { r: 'Rosso (R)', g: 'Verde (G)', b: 'Blu (B)' }[canale];
-    }
-    return { r: 'Tinta (H)', g: 'Saturazione (S)', b: 'Luminosità (L)' }[canale];
+  controlloColore(campo: CampoColore): FormControl<number> {
+    return this.form.controls.colori.controls[this.coloreSelezionato()].controls[campo];
   }
 
   async salva(): Promise<void> {
@@ -171,7 +156,6 @@ export class CalibrazioneComponent implements OnInit {
     }
 
     this.salvataggio.set(true);
-    this.sincronizzaColori(this.modalitaColore());
 
     try {
       const raw = this.form.getRawValue();
@@ -188,7 +172,6 @@ export class CalibrazioneComponent implements OnInit {
           b: Number(raw.biancoOffset.b),
         },
         coloriAbilitati: raw.coloriAbilitati,
-        modalitaColore: this.modalitaColore(),
         colori: this.estraiColori(),
       };
 
@@ -238,21 +221,16 @@ export class CalibrazioneComponent implements OnInit {
     });
   }
 
-  private creaGruppoColore(r: number, g: number, b: number) {
-    const hsl = rgbToHsl({ r, g, b });
+  private creaGruppoColore(valore1 = 0, valore2 = 0, valore3 = 0): GruppoColore {
     return this.fb.nonNullable.group({
-      r: [r, [Validators.required, Validators.min(0), Validators.max(255)]],
-      g: [g, [Validators.required, Validators.min(0), Validators.max(255)]],
-      b: [b, [Validators.required, Validators.min(0), Validators.max(255)]],
-      h: [hsl.h, [Validators.required, Validators.min(0), Validators.max(360)]],
-      s: [hsl.s, [Validators.required, Validators.min(0), Validators.max(100)]],
-      l: [hsl.l, [Validators.required, Validators.min(0), Validators.max(100)]],
+      valore1: [valore1, [Validators.required]],
+      valore2: [valore2, [Validators.required]],
+      valore3: [valore3, [Validators.required]],
     });
   }
 
   private caricaCalibrazione(calibrazione: Calibrazione): void {
     const valori = calibrazione.valori;
-    this.modalitaColore.set(valori.modalitaColore);
     this.form.patchValue({
       biancoGain: { ...valori.biancoGain },
       biancoOffset: { ...valori.biancoOffset },
@@ -271,12 +249,9 @@ export class CalibrazioneComponent implements OnInit {
       const gruppo = this.form.controls.colori.controls[colore.chiave];
       const dati = valori.colori[colore.chiave];
       gruppo.patchValue({
-        r: dati.rgb.r,
-        g: dati.rgb.g,
-        b: dati.rgb.b,
-        h: dati.hsl.h,
-        s: dati.hsl.s,
-        l: dati.hsl.l,
+        valore1: dati.valore1,
+        valore2: dati.valore2,
+        valore3: dati.valore3,
       });
     }
   }
@@ -300,62 +275,14 @@ export class CalibrazioneComponent implements OnInit {
       .filter((parametro) => parametro.etichetta.length > 0);
   }
 
-  private sincronizzaColori(modalita: ModalitaColore): void {
-    for (const colore of this.colori) {
-      const gruppo = this.form.controls.colori.controls[colore.chiave];
-      if (modalita === 'RGB') {
-        const hsl = rgbToHsl({
-          r: gruppo.controls.r.value,
-          g: gruppo.controls.g.value,
-          b: gruppo.controls.b.value,
-        });
-        gruppo.controls.h.setValue(hsl.h, { emitEvent: false });
-        gruppo.controls.s.setValue(hsl.s, { emitEvent: false });
-        gruppo.controls.l.setValue(hsl.l, { emitEvent: false });
-      } else {
-        const rgb = hslToRgb({
-          h: gruppo.controls.h.value,
-          s: gruppo.controls.s.value,
-          l: gruppo.controls.l.value,
-        });
-        gruppo.controls.r.setValue(rgb.r, { emitEvent: false });
-        gruppo.controls.g.setValue(rgb.g, { emitEvent: false });
-        gruppo.controls.b.setValue(rgb.b, { emitEvent: false });
-      }
-    }
-  }
-
-  private hslColoreSelezionato() {
-    const gruppo = this.form.controls.colori.controls[this.coloreSelezionato()];
-    if (this.modalitaColore() === 'HSL') {
-      return {
-        h: gruppo.controls.h.value,
-        s: gruppo.controls.s.value,
-        l: gruppo.controls.l.value,
-      };
-    }
-    return rgbToHsl({
-      r: gruppo.controls.r.value,
-      g: gruppo.controls.g.value,
-      b: gruppo.controls.b.value,
-    });
-  }
-
   private estraiColori(): Record<ColoreBase, ColoreCalibrazione> {
     const colori = {} as Record<ColoreBase, ColoreCalibrazione>;
     for (const colore of this.colori) {
       const gruppo = this.form.controls.colori.controls[colore.chiave];
       colori[colore.chiave] = {
-        rgb: {
-          r: gruppo.controls.r.value,
-          g: gruppo.controls.g.value,
-          b: gruppo.controls.b.value,
-        },
-        hsl: {
-          h: gruppo.controls.h.value,
-          s: gruppo.controls.s.value,
-          l: gruppo.controls.l.value,
-        },
+        valore1: gruppo.controls.valore1.value,
+        valore2: gruppo.controls.valore2.value,
+        valore3: gruppo.controls.valore3.value,
       };
     }
     return colori;

@@ -16,8 +16,7 @@ public class NuovoTelevisoreRequest {
     @Size(min = 2)
     private String modello;
 
-    @NotBlank
-    @Size(min = 4)
+    @Size(max = 100)
     private String codiceSeriale;
 
     @Min(10)

@@ -57,9 +57,7 @@
         </div>
 
         <div class="campo campo-intero">
-          <label class="etichetta" for="seriale">
-            Codice seriale <span class="obbligatorio">*</span>
-          </label>
+          <label class="etichetta" for="seriale">Codice seriale</label>
           <input
             id="seriale"
             type="text"
@@ -69,10 +67,11 @@
             autocomplete="off"
           />
           <span class="suggerimento">
-            Il seriale deve essere univoco: viene usato per la ricerca e per l’esportazione.
+            Campo facoltativo. Se inserito deve essere univoco: viene usato per la ricerca e per
+            l’esportazione.
           </span>
           @if (form.controls.codiceSeriale.touched && form.controls.codiceSeriale.invalid) {
-            <small class="messaggio-errore">Inserisci un codice seriale di almeno 4 caratteri.</small>
+            <small class="messaggio-errore">Il codice seriale non può superare 100 caratteri.</small>
           }
         </div>
       </div>

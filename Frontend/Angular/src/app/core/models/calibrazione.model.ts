@@ -1,5 +1,3 @@
-export type ModalitaColore = 'RGB' | 'HSL';
-
 export type ColoreBase = 'rosso' | 'verde' | 'blu' | 'ciano' | 'magenta' | 'giallo';
 
 export interface Rgb {
@@ -8,15 +6,15 @@ export interface Rgb {
   b: number;
 }
 
-export interface Hsl {
-  h: number;
-  s: number;
-  l: number;
-}
-
+/**
+ * I tre valori che il tecnico inserisce nella TV per un singolo colore.
+ * Non c'e' alcuna conversione: sono esattamente i numeri letti/scritti nel
+ * menu della televisione (l'ordine e il significato dipendono dal modello).
+ */
 export interface ColoreCalibrazione {
-  rgb: Rgb;
-  hsl: Hsl;
+  valore1: number;
+  valore2: number;
+  valore3: number;
 }
 
 /**
@@ -34,7 +32,6 @@ export interface ValoriCalibrazione {
   biancoOffset: Rgb;
   /** Se false la calibrazione riguarda solo la regolazione bianco/nero, senza RGBCMY. */
   coloriAbilitati: boolean;
-  modalitaColore: ModalitaColore;
   colori: Record<ColoreBase, ColoreCalibrazione>;
 }
 

@@ -131,7 +131,7 @@
             <span class="icona-riga"><app-icon nome="tv" [dimensione]="18"></app-icon></span>
             <span class="dettagli">
               <strong>{{ tv.marca }} {{ tv.modello }}</strong>
-              <small>{{ tv.tecnologia }} · {{ tv.codiceSeriale }}</small>
+              <small>{{ tv.tecnologia }}{{ tv.codiceSeriale ? ' · ' + tv.codiceSeriale : '' }}</small>
             </span>
             <app-stato-badge [stato]="tv.stato"></app-stato-badge>
             <span class="data">{{ data(tv.dataAggiunta) }}</span>

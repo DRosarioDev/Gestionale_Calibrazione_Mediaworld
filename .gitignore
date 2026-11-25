@@ -45,6 +45,9 @@ Frontend/Angular/README.md
 *.swo
 
 # ---------- Sistema operativo ----------
+Dati/
+
+# ---------- Sistema operativo ----------
 .DS_Store
 Thumbs.db
 desktop.ini
