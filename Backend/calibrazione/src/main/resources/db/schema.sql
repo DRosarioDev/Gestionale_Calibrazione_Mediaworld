@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS televisori (
     codice_seriale    VARCHAR(100) NOT NULL,
     pollici           INTEGER      NOT NULL CHECK (pollici BETWEEN 10 AND 150),
     tecnologia        VARCHAR(30)  NOT NULL
-        CHECK (tecnologia IN ('OLED', 'QLED', 'NEO_QLED', 'MINI_LED', 'LED',
+        CHECK (tecnologia IN ('UHD', 'OLED', 'QLED', 'NEO_QLED', 'MINI_LED', 'LED',
                               'MICRO_LED', 'LCD', 'PLASMA', 'ALTRO')),
     stato             VARCHAR(30)  NOT NULL
         CHECK (stato IN ('DA_CALIBRARE', 'IN_CALIBRAZIONE', 'CALIBRATO')),
