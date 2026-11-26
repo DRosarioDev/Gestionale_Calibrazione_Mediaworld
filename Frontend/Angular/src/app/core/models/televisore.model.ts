@@ -38,7 +38,7 @@ export const MARCHE = [
   'Altro',
 ] as const;
 
-export const TECNOLOGIE = ['OLED', 'QLED', 'Neo QLED', 'Mini LED', 'LED', 'Micro LED', 'Altro'] as const;
+export const TECNOLOGIE = ['UHD', 'OLED', 'QLED', 'Neo QLED', 'Mini LED', 'LED', 'Micro LED', 'Altro'] as const;
 
 export const ETICHETTE_STATO: Record<StatoTv, string> = {
   DA_CALIBRARE: 'Da calibrare',
