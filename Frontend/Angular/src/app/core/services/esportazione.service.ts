@@ -8,15 +8,15 @@ import { dataPerFile, formattaDataCompleta, formattaDataOra, nomeFileSicuro } fr
 export class EsportazioneService {
   costruisciTesto(tv: Televisore): string {
     const righe: string[] = [];
-    const sep = '='.repeat(64);
-    const sotto = '-'.repeat(64);
+    const sep = '='.repeat(62);
+    const sotto = '-'.repeat(62);
 
     const riga = (etichetta: string, valore: string | number): string =>
       `${etichetta.padEnd(24, '.')} ${valore}`;
 
     righe.push(sep);
-    righe.push('        MEDIAWORLD - SCHEDA DI CALIBRAZIONE');
-    righe.push('              Centro di Arese');
+    righe.push('               MEDIAWORLD - SCHEDA DI CALIBRAZIONE');
+    righe.push('                        Centro di Arese');
     righe.push(sep);
     righe.push('');
     righe.push('DATI TELEVISORE');
@@ -85,6 +85,10 @@ export class EsportazioneService {
       righe.push('');
     }
 
+    righe.push('');
+    righe.push('APPLICA A TUTTE LE SORGENTI');
+    right.push(sotto);
+    
     if (cal.note.trim()) {
       righe.push('');
       righe.push('NOTE');
@@ -92,6 +96,7 @@ export class EsportazioneService {
       righe.push(cal.note.trim());
     }
 
+    righe.push(sep);
 
     return righe.join('\r\n');
   }
