@@ -87,7 +87,7 @@ export class EsportazioneService {
 
     righe.push('');
     righe.push('APPLICA A TUTTE LE SORGENTI');
-    right.push(sotto);
+    righe.push(sotto);
     
     if (cal.note.trim()) {
       righe.push('');
