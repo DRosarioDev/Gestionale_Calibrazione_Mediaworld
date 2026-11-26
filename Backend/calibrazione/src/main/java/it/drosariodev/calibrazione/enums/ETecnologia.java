@@ -5,8 +5,8 @@ package it.drosariodev.calibrazione.enums;
  */
 public enum ETecnologia {
 
+    UHD,
     OLED,
-    QLED,
     NEO_QLED,
     MINI_LED,
     LED,
