@@ -26,19 +26,34 @@ export interface NuovoTelevisore {
   note: string;
 }
 
+export type AggiornaTelevisore = NuovoTelevisore;
+
 export const MARCHE = [
   'Samsung',
   'LG',
   'Sony',
   'Philips',
   'Panasonic',
+  'Toshiba',
   'Hisense',
-  'TCL',
   'Sharp',
+  'Vizio',
+  'TCL',
   'Altro',
 ] as const;
 
-export const TECNOLOGIE = ['UHD', 'OLED', 'QLED', 'Neo QLED', 'Mini LED', 'LED', 'Micro LED', 'Altro'] as const;
+export const TECNOLOGIE = [
+  'UHD',
+  'OLED',
+  'QLED',
+  'Neo QLED',
+  'Mini LED',
+  'LED',
+  'Micro LED',
+  'LCD',
+  'Plasma',
+  'Altro',
+] as const;
 
 export const ETICHETTE_STATO: Record<StatoTv, string> = {
   DA_CALIBRARE: 'Da calibrare',

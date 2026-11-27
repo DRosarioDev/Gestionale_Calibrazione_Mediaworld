@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.drosariodev.calibrazione.dto.televisore.AggiornaTelevisoreRequest;
 import it.drosariodev.calibrazione.dto.televisore.NuovoTelevisoreRequest;
 import it.drosariodev.calibrazione.dto.televisore.SalvaCalibrazioneRequest;
 import it.drosariodev.calibrazione.dto.televisore.SalvaReportRequest;
@@ -44,6 +45,12 @@ public class TelevisoreController {
     @ResponseStatus(HttpStatus.CREATED)
     public TelevisoreDTO crea(@Valid @RequestBody NuovoTelevisoreRequest request) throws DAOException {
         return televisoreService.crea(request);
+    }
+
+    @PutMapping("/{id}")
+    public TelevisoreDTO aggiorna(@PathVariable Long id,
+                                  @Valid @RequestBody AggiornaTelevisoreRequest request) throws DAOException {
+        return televisoreService.aggiorna(id, request);
     }
 
     @PatchMapping("/{id}/avvia-calibrazione")

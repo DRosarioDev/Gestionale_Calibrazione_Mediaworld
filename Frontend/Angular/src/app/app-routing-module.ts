@@ -39,6 +39,14 @@ const routes: Routes = [
         title: 'Nuova televisione · MediaWorld Calibration Suite',
       },
       {
+        path: 'televisori/:id/modifica',
+        loadComponent: () =>
+          import('./features/televisori/nuovo-televisore/nuovo-televisore.component').then(
+            (m) => m.NuovoTelevisoreComponent,
+          ),
+        title: 'Modifica TV · MediaWorld Calibration Suite',
+      },
+      {
         path: 'televisori/:id',
         loadComponent: () =>
           import('./features/televisori/dettaglio-televisore/dettaglio-televisore.component').then(

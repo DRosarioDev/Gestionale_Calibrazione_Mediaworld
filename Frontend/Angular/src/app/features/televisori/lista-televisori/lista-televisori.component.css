@@ -199,6 +199,19 @@
   text-align: right;
 }
 
+.testo-elimina {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mw-grigio-600);
+}
+
+.footer-elimina {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  width: 100%;
+}
+
 @media (max-width: 1100px) {
   .tabella th:nth-child(4),
   .tabella td:nth-child(4) {

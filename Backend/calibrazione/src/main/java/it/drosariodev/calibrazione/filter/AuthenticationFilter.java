@@ -77,8 +77,10 @@ public class AuthenticationFilter {
                 // Gestione utenti riservata agli amministratori.
                 .requestMatchers("/api/utenti", "/api/utenti/**").hasRole("ADMIN")
 
-                // L'eliminazione di una televisione è riservata agli amministratori.
-                .requestMatchers(HttpMethod.DELETE, "/api/televisori", "/api/televisori/**").hasRole("ADMIN")
+                // L'eliminazione di una televisione è consentita agli utenti
+                // autenticati; il service verifica che un tecnico possa
+                // eliminare solo le televisioni inserite da lui stesso.
+                .requestMatchers(HttpMethod.DELETE, "/api/televisori", "/api/televisori/**").authenticated()
 
                 // Lettura e scrittura delle televisioni richiedono un utente autenticato.
                 .requestMatchers("/api/televisori", "/api/televisori/**").authenticated()

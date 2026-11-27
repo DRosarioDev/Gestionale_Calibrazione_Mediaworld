@@ -2,12 +2,15 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TelevisoriService } from '../../../core/services/televisori.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { ETICHETTE_STATO, StatoTv, Televisore } from '../../../core/models/televisore.model';
 import { formattaData } from '../../../core/utils/data.util';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StatoBadgeComponent } from '../../../shared/components/stato-badge/stato-badge.component';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 
 type FiltroStato = 'TUTTI' | StatoTv;
 type Ordinamento = 'recenti' | 'modello' | 'stato' | 'calibrazione';
@@ -21,6 +24,7 @@ type Ordinamento = 'recenti' | 'modello' | 'stato' | 'calibrazione';
     StatoBadgeComponent,
     IconComponent,
     EmptyStateComponent,
+    ModalComponent,
   ],
   templateUrl: './lista-televisori.component.html',
   styleUrl: './lista-televisori.component.css',
@@ -28,9 +32,15 @@ type Ordinamento = 'recenti' | 'modello' | 'stato' | 'calibrazione';
 export class ListaTelevisoriComponent {
   private readonly televisoriService = inject(TelevisoriService);
   private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
 
   readonly televisioni = this.televisoriService.televisori;
   readonly totale = this.televisoriService.totale;
+  readonly isAdmin = this.auth.isAdmin;
+
+  readonly tvDaEliminare = signal<Televisore | null>(null);
+  readonly eliminazioneInCorso = signal(false);
 
   readonly cerca = signal('');
   readonly stato = signal<FiltroStato>('TUTTI');
@@ -143,6 +153,39 @@ export class ListaTelevisoriComponent {
 
   data(iso: string | null | undefined): string {
     return formattaData(iso);
+  }
+
+  puoEliminare(tv: Televisore): boolean {
+    if (this.isAdmin()) return true;
+    const utente = this.auth.nomeCompleto();
+    return !!utente && tv.aggiuntoDa.trim().toLowerCase() === utente.trim().toLowerCase();
+  }
+
+  apriEliminazione(tv: Televisore): void {
+    this.tvDaEliminare.set(tv);
+  }
+
+  chiudiEliminazione(): void {
+    if (this.eliminazioneInCorso()) return;
+    this.tvDaEliminare.set(null);
+  }
+
+  async elimina(): Promise<void> {
+    const tv = this.tvDaEliminare();
+    if (!tv) return;
+
+    this.eliminazioneInCorso.set(true);
+    try {
+      await this.televisoriService.elimina(tv.id);
+      this.tvDaEliminare.set(null);
+      this.toast.successo(`${tv.marca} ${tv.modello} eliminata dall’archivio.`);
+    } catch (errore: unknown) {
+      this.toast.errore(
+        errore instanceof Error ? errore.message : 'Impossibile eliminare la televisione.',
+      );
+    } finally {
+      this.eliminazioneInCorso.set(false);
+    }
   }
 
   private isFiltroStato(valore: string): valore is FiltroStato {

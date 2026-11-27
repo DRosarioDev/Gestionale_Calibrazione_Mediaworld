@@ -21,6 +21,14 @@
       </div>
     </div>
     <div class="azioni">
+      <a
+        [routerLink]="['/televisori', tv.id, 'modifica']"
+        class="btn btn-secondario"
+        title="Modifica dati televisione"
+      >
+        <app-icon nome="edit" [dimensione]="16"></app-icon>
+        Modifica
+      </a>
       @if (tv.stato === 'CALIBRATO') {
         <button type="button" class="btn btn-secondario" (click)="avviaCalibrazione()">
           <app-icon nome="refresh" [dimensione]="16"></app-icon>
@@ -36,7 +44,7 @@
           {{ tv.stato === 'IN_CALIBRAZIONE' ? 'Riprendi calibrazione' : 'Avvia calibrazione' }}
         </button>
       }
-      @if (isAdmin()) {
+      @if (puoEliminare()) {
         <button
           type="button"
           class="btn btn-pericolo btn-icona"

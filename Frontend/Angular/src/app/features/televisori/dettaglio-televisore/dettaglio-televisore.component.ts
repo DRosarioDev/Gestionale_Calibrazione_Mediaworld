@@ -39,6 +39,16 @@ export class DettaglioTelevisoreComponent implements OnInit {
 
   readonly modaleEsporta = signal(false);
   readonly confermaEliminazione = signal(false);
+  readonly puoEliminare = computed(() => {
+    if (this.isAdmin()) return true;
+    const televisore = this.televisore();
+    const utente = this.auth.nomeCompleto();
+    return (
+      !!televisore &&
+      !!utente &&
+      televisore.aggiuntoDa.trim().toLowerCase() === utente.trim().toLowerCase()
+    );
+  });
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id') ?? '';

@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environment/environment';
-import { Utente } from '../models/utente.model';
+import { Utente, nomeCompleto } from '../models/utente.model';
 
 interface RispostaLogin {
   token: string;
@@ -26,6 +26,10 @@ export class AuthService {
   readonly utente = computed(() => this._sessione()?.utente ?? null);
   readonly autenticato = computed(() => this._sessione() !== null);
   readonly isAdmin = computed(() => this._sessione()?.utente.ruolo === 'ADMIN');
+  readonly nomeCompleto = computed(() => {
+    const utente = this._sessione()?.utente;
+    return utente ? nomeCompleto(utente) : null;
+  });
   readonly token = computed(() => this._sessione()?.token ?? null);
 
   async login(email: string, password: string): Promise<Utente> {

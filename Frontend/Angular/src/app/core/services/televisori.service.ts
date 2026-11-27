@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { MetaCalibrazione, ValoriCalibrazione } from '../models/calibrazione.model';
-import { NuovoTelevisore, Televisore } from '../models/televisore.model';
+import { AggiornaTelevisore, NuovoTelevisore, Televisore } from '../models/televisore.model';
 
 const BASE_URL = `${environment.backendUrl}/televisori`;
 
@@ -27,6 +27,12 @@ export class TelevisoriService {
   async aggiungi(input: NuovoTelevisore): Promise<Televisore> {
     const tv = await firstValueFrom(this.http.post<Televisore>(BASE_URL, input));
     this._televisori.update((televisori) => [tv, ...televisori]);
+    return tv;
+  }
+
+  async aggiorna(id: string, input: AggiornaTelevisore): Promise<Televisore> {
+    const tv = await firstValueFrom(this.http.put<Televisore>(`${BASE_URL}/${id}`, input));
+    this.aggiornaInLista(tv);
     return tv;
   }
 

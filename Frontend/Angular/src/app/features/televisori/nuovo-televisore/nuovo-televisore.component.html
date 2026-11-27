@@ -1,16 +1,20 @@
-<a routerLink="/televisori" class="link-indietro">
+<a [routerLink]="linkIndietro" class="link-indietro">
   <app-icon nome="arrow-left" [dimensione]="15"></app-icon>
-  Torna ai televisori
+  {{ inModifica ? 'Torna alla televisione' : 'Torna ai televisori' }}
 </a>
 
 <app-page-header
-  titolo="Nuova televisione"
-  sottotitolo="Registra un nuovo modello da calibrare. I dati resteranno modificabili."
+  [titolo]="inModifica ? 'Modifica televisione' : 'Nuova televisione'"
+  [sottotitolo]="
+    inModifica
+      ? 'Aggiorna i dati anagrafici della televisione. I dati di calibrazione non vengono modificati.'
+      : 'Registra un nuovo modello da calibrare. I dati resteranno modificabili.'
+  "
 >
-  <a routerLink="/televisori" class="btn btn-ghost">Annulla</a>
+  <a [routerLink]="linkIndietro" class="btn btn-ghost">Annulla</a>
   <button type="button" class="btn btn-primario" (click)="salva(false)" [disabled]="invio()">
-    <app-icon nome="plus" [dimensione]="16"></app-icon>
-    Aggiungi televisione
+    <app-icon [nome]="inModifica ? 'save' : 'plus'" [dimensione]="16"></app-icon>
+    {{ inModifica ? 'Salva modifiche' : 'Aggiungi televisione' }}
   </button>
 </app-page-header>
 
@@ -141,14 +145,16 @@
     </section>
 
     <footer class="azioni-form">
-      <a routerLink="/televisori" class="btn btn-secondario">Annulla</a>
-      <button type="button" class="btn btn-secondario" (click)="salva(true)" [disabled]="invio()">
-        Salva e avvia calibrazione
-        <app-icon nome="arrow-up-right" [dimensione]="16"></app-icon>
-      </button>
+      <a [routerLink]="linkIndietro" class="btn btn-secondario">Annulla</a>
+      @if (!inModifica) {
+        <button type="button" class="btn btn-secondario" (click)="salva(true)" [disabled]="invio()">
+          Salva e avvia calibrazione
+          <app-icon nome="arrow-up-right" [dimensione]="16"></app-icon>
+        </button>
+      }
       <button type="submit" class="btn btn-primario" [disabled]="invio()">
-        <app-icon nome="check" [dimensione]="16"></app-icon>
-        Aggiungi televisione
+        <app-icon [nome]="inModifica ? 'save' : 'check'" [dimensione]="16"></app-icon>
+        {{ inModifica ? 'Salva modifiche' : 'Aggiungi televisione' }}
       </button>
     </footer>
   </form>
@@ -208,10 +214,17 @@
 
     <section class="nota-rossa">
       <app-icon nome="info" [dimensione]="18"></app-icon>
-      <p>
-        La televisione sarà creata con stato <strong>Da calibrare</strong>. Potrai riprenderla in
-        qualsiasi momento dalla lista.
-      </p>
+      @if (inModifica) {
+        <p>
+          Le modifiche riguardano solo i dati anagrafici: stato, date e calibrazione della
+          televisione restano invariati.
+        </p>
+      } @else {
+        <p>
+          La televisione sarà creata con stato <strong>Da calibrare</strong>. Potrai riprenderla in
+          qualsiasi momento dalla lista.
+        </p>
+      }
     </section>
   </aside>
 </div>

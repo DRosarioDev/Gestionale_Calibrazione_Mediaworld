@@ -117,6 +117,24 @@
                   >
                     <app-icon nome="eye" [dimensione]="17"></app-icon>
                   </a>
+                  <a
+                    [routerLink]="['/televisori', tv.id, 'modifica']"
+                    class="btn btn-secondario btn-icona"
+                    title="Modifica dati televisione"
+                  >
+                    <app-icon nome="edit" [dimensione]="17"></app-icon>
+                  </a>
+                  @if (puoEliminare(tv)) {
+                    <button
+                      type="button"
+                      class="btn btn-pericolo btn-icona"
+                      (click)="apriEliminazione(tv)"
+                      title="Elimina televisione"
+                      aria-label="Elimina televisione"
+                    >
+                      <app-icon nome="trash" [dimensione]="17"></app-icon>
+                    </button>
+                  }
                   @if (tv.stato === 'CALIBRATO') {
                     <a
                       [routerLink]="['/televisori', tv.id]"
@@ -142,3 +160,39 @@
     </div>
   }
 </section>
+
+<app-modal
+  [aperto]="tvDaEliminare() !== null"
+  titolo="Eliminare la televisione?"
+  sottotitolo="L’operazione non può essere annullata."
+  larghezza="460px"
+  (chiuso)="chiudiEliminazione()"
+>
+  @if (tvDaEliminare(); as tv) {
+    <p class="testo-elimina">
+      Stai per eliminare <strong>{{ tv.marca }} {{ tv.modello }}</strong>
+      ({{ tv.codiceSeriale || 'senza seriale' }}) dall’archivio. Anche la calibrazione associata
+      verrà rimossa.
+    </p>
+  }
+
+  <div footer class="footer-elimina">
+    <button
+      type="button"
+      class="btn btn-secondario"
+      (click)="chiudiEliminazione()"
+      [disabled]="eliminazioneInCorso()"
+    >
+      Annulla
+    </button>
+    <button
+      type="button"
+      class="btn btn-pericolo"
+      (click)="elimina()"
+      [disabled]="eliminazioneInCorso()"
+    >
+      <app-icon nome="trash" [dimensione]="15"></app-icon>
+      {{ eliminazioneInCorso() ? 'Eliminazione…' : 'Elimina definitivamente' }}
+    </button>
+  </div>
+</app-modal>
