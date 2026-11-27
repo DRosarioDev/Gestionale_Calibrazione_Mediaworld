@@ -101,6 +101,7 @@ public class Mapper {
             return null;
         }
         return switch (tecnologia) {
+            case UHD -> "UHD";
             case OLED -> "OLED";
             case QLED -> "QLED";
             case NEO_QLED -> "Neo QLED";

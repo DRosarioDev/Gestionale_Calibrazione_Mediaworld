@@ -79,6 +79,14 @@ CREATE TABLE IF NOT EXISTS televisori (
     calibrazione_id   BIGINT UNIQUE REFERENCES calibrazioni (id) ON DELETE SET NULL
 );
 
+-- Migrazione idempotente per i database creati prima dell'introduzione di UHD:
+-- il vecchio vincolo CHECK non accetta il nuovo valore. Il vincolo viene
+-- ricreato con l'elenco completo delle tecnologie supportate.
+ALTER TABLE televisori DROP CONSTRAINT IF EXISTS televisori_tecnologia_check;
+ALTER TABLE televisori ADD CONSTRAINT televisori_tecnologia_check
+    CHECK (tecnologia IN ('UHD', 'OLED', 'QLED', 'NEO_QLED', 'MINI_LED', 'LED',
+                          'MICRO_LED', 'LCD', 'PLASMA', 'ALTRO'));
+
 -- Il service salva il seriale in maiuscolo, l'indice ne garantisce
 -- comunque l'unicita' indipendentemente dal case.
 -- Il seriale e' opzionale: l'indice ignora i valori vuoti, cosi' piu'
